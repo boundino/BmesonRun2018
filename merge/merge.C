@@ -44,6 +44,10 @@ void merge(std::string outputname, std::string filelist, std::string ntname = "n
     }
   std::cout<<"Merged \e[31;1m"<<count<<"\e[0m files"<<std::endl;
   hlt->SetBranchStatus("HLT_HIIslandPhoton*", 0);
+
+  int HLT_HIL1DoubleMuOpen_v1; hlt->SetBranchAddress("HLT_HIL1DoubleMuOpen_v1", &HLT_HIL1DoubleMuOpen_v1);
+  int HLT_HIL1DoubleMu10_v1; hlt->SetBranchAddress("HLT_HIL1DoubleMu10_v1", &HLT_HIL1DoubleMu10_v1);
+  int HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v1; hlt->SetBranchAddress("HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v1", &HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v1);
       
   TFile* outf = new TFile(outputname.c_str(), "recreate");
   TDirectory* dhlt = outf->mkdir("hltanalysis","");
@@ -73,6 +77,8 @@ void merge(std::string outputname, std::string filelist, std::string ntname = "n
       skim->GetEntry(i);
       hi->GetEntry(i);
       nt->GetEntry(i);
+
+      if(!HLT_HIL1DoubleMuOpen_v1 && !HLT_HIL1DoubleMu10_v1 && !HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v1) continue; //
 
       if(!Bsize) continue;
 
