@@ -1,12 +1,13 @@
 #!/bin/bash
 # run_mc_gensim_cmssw94X.sh #
 # ~CMSSW_9_4_12 #
-
 source utility.shinc
 
-igs=(4 5)
+igs=(0 1)
 ips=(1)
-its=(1)
+
+##
+its=(1) # fixed CP5
 
 ##
 
