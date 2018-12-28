@@ -8,6 +8,7 @@ git clone https://github.com/boundino/HFAnaGenFrags.git
 scram b -j4
 
 ln -s HFAnaGenFrags/Run2018PbPb502 .
+scram b -j4
 
 # Set up grid >>>
 echo $0
