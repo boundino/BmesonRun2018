@@ -64,3 +64,8 @@ process.Timing = cms.Service("Timing",
         done
     done
 done
+
+
+# cmsDriver.py Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0_Pthat5_TuneCP5_5020GeV.py --fileout file:Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0_Pthat5_TuneCP5_5020GeV.root --mc --eventcontent RAWSIM --datatier GEN-SIM \
+#     --conditions 94X_mc2017_realistic_forppRef5TeV --beamspot Realistic5TeVppCollision2017 --step GEN,SIM --nThreads 2 --geometry DB:Extended --era Run2_2017_ppRef \
+#     --python_filename Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0_Pthat5_TuneCP5_5020GeV_GEN_SIM.py --no_exec -n 5l000
