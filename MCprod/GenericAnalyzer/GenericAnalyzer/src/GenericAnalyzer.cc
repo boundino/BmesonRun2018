@@ -307,14 +307,14 @@ GenericAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
                 if(abs(p.daughter(0)->daughter(1)->pdgId())==13)
                   if(abs(p.daughter(1)->pdgId()) == 113)
                     if(p.daughter(1)->numberOfDaughters()>1)
-                    if(abs(p.daughter(1)->daughter(0)->pdgId()) == 211 && abs(p.daughter(2)->daughter(1)->pdgId()) == 211) 
-                    {
-                      Bpt->Fill(p.pt());
-                      Beta->Fill(p.eta());
-                      Bspt->Fill(p.pt());
-                      Bseta->Fill(p.eta());
-                      GetXSignal = true;
-                    }
+                      if(abs(p.daughter(1)->daughter(0)->pdgId()) == 211 && abs(p.daughter(1)->daughter(1)->pdgId()) == 211) 
+                        {
+                          Bpt->Fill(p.pt());
+                          Beta->Fill(p.eta());
+                          Bspt->Fill(p.pt());
+                          Bseta->Fill(p.eta());
+                          GetXSignal = true;
+                        }
       }
       //Saving Psi' info
       if(abs(pdg) == 100443){
