@@ -175,10 +175,10 @@ GenericAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       //if(abs(pdg) == 421 || abs(pdg) == 22){
       // if(abs(pdg) == 431){
       if(abs(pdg) == 511 || abs(pdg) == 521 || abs(pdg) == 531 || abs(pdg) == 20443 || abs(pdg) == 100443) {
-      // if(abs(pdg) == 20443 || abs(pdg) == 100443){
+      // if(abs(pdg) == 9940023){
         //if(abs(int(pdg/100) % 100) == 5){
         //if(1){
-        if(p.numberOfMothers() != 0) cout<<"\e[42;97;1m"<<"======my mother Id/pt: "<<p.mother()->pdgId()<<" / "<<p.mother()->pt()<<"\e[0m"<<endl;
+        if(p.numberOfMothers() != 0) cout<<"\e[42;97;1m"<<"======my mother Id/pt: "<<p.mother()->pdgId()<<" => "<<p.mother()->mass()<<" / "<<p.mother()->pt()<<"\e[0m"<<endl;
         int ndau = p.numberOfDaughters();
         cout<<"\e[42;97;1m"<<"I am(pdg/status/pt/#daughters): "<<pdg<<" => "<<p.mass()<<" / "<<p.status()<<" / "<<p.pt()<<" / "<<ndau<<"\e[0m"<<endl;
         if(ndau != 0){
