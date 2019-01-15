@@ -9,7 +9,7 @@
 #include <iostream>
 #include <algorithm>
 
-void compareleaf(std::string input_a, std::string input_b, std::string treename)
+void diffleaf(std::string input_a, std::string input_b, std::string treename)
 {
   TFile* inf_a = new TFile(input_a.c_str(), "update");
   TTree* nt_a = (TTree*)inf_a->Get(treename.c_str());
@@ -19,17 +19,15 @@ void compareleaf(std::string input_a, std::string input_b, std::string treename)
   auto branchlist_a = nt_a->GetListOfBranches(); // TObjArray*
   const int nbr_a = nt_a->GetNbranches();
   std::vector<std::string> brname_a;
-  // std::vector<int> br_a;
   for(int i=0; i<nbr_a; i++) { brname_a.push_back(branchlist_a->At(i)->GetName()); 
     // std::cout<<branchlist_a->At(i)->GetName()<<std::endl; 
   }
 
-  std::cout<<std::string(25, '#')<<std::endl;
+  std::cout<<std::endl<<std::string(25, '#')<<std::endl;
 
   auto branchlist_b = nt_b->GetListOfBranches(); // TObjArray*
   const int nbr_b = nt_b->GetNbranches();
   std::vector<std::string> brname_b;
-  // std::vector<int> br_b;
   for(int i=0; i<nbr_b; i++) { brname_b.push_back(branchlist_b->At(i)->GetName()); 
     // std::cout<<branchlist_b->At(i)->GetName()<<std::endl; 
   }
@@ -51,10 +49,10 @@ void compareleaf(std::string input_a, std::string input_b, std::string treename)
       if(pos == brname_a.end()) { only_b.push_back(ib); }
     }
 
-  std::cout<<"\e[41;97;1monly_a >>>\e[31;40;1m"<<std::endl;
+  std::cout<<"\e[41;97;1m"<<input_a<<"\e[0m"<<std::endl<<"\e[41;97;1monly_a >>>\e[31;40;1m"<<std::endl;
   for(auto& o : only_a) { std::cout<<o<<std::endl; }
   std::cout<<std::endl;
-  std::cout<<"\e[42;97;1monly_b >>>\e[32;40;1m"<<std::endl;
+  std::cout<<"\e[42;97;1m"<<input_b<<"\e[0m"<<std::endl<<"\e[42;97;1monly_b >>>\e[32;40;1m"<<std::endl;
   for(auto& o : only_b) { std::cout<<o<<std::endl; }
   std::cout<<"\e[0m";
 
@@ -79,6 +77,7 @@ void compareleaf(std::string input_a, std::string input_b, std::string treename)
 
 int main(int argc, char* argv[])
 {
-  if(argc==4) { compareleaf(argv[1], argv[2], argv[3]); return 0; }
+  if(argc==4) { diffleaf(argv[1], argv[2], argv[3]); return 0; }
+  std::cout<<__FUNCTION__<<": ./diffleaf [file1] [file2] [treename]"<<std::endl;
   return 1;
 }
