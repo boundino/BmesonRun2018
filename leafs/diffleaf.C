@@ -11,9 +11,9 @@
 
 void diffleaf(std::string input_a, std::string input_b, std::string treename)
 {
-  TFile* inf_a = new TFile(input_a.c_str(), "update");
+  TFile* inf_a = new TFile(input_a.c_str());
   TTree* nt_a = (TTree*)inf_a->Get(treename.c_str());
-  TFile* inf_b = new TFile(input_b.c_str(), "update");
+  TFile* inf_b = new TFile(input_b.c_str());
   TTree* nt_b = (TTree*)inf_b->Get(treename.c_str());
 
   auto branchlist_a = nt_a->GetListOfBranches(); // TObjArray*
