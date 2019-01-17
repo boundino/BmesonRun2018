@@ -43,7 +43,16 @@ void merge(std::string outputname, std::string filelist, std::string ntname = "n
       std::cout<<i<<std::endl;
     }
   std::cout<<"Merged \e[31;1m"<<count<<"\e[0m files"<<std::endl;
-  hlt->SetBranchStatus("HLT_HIIslandPhoton*", 0);
+  // hlt->SetBranchStatus("HLT_HIIslandPhoton*", 0);
+  hlt->SetBranchStatus("HLT_HIMinimumBias*", 0);
+  hlt->SetBranchStatus("HLT_HIL3Mu3Eta2p5*", 0);
+  hlt->SetBranchStatus("HLT_HICastor*", 0);
+  hlt->SetBranchStatus("HLT_HIGEDPhoton*", 0);
+  hlt->SetBranchStatus("HLT_HIPuAK4CaloJet*", 0);
+  hlt->SetBranchStatus("HLT_HIL1NotBptxOR*", 0);
+  hlt->SetBranchStatus("HLT_HIL1UnpairedBunch*", 0);
+  hlt->SetBranchStatus("HLTriggerFinal*", 0);
+  // hlt->SetBranchStatus("L1_*", 0);
 
   int HLT_HIL1DoubleMuOpen_v1; hlt->SetBranchAddress("HLT_HIL1DoubleMuOpen_v1", &HLT_HIL1DoubleMuOpen_v1);
   int HLT_HIL1DoubleMu10_v1; hlt->SetBranchAddress("HLT_HIL1DoubleMu10_v1", &HLT_HIL1DoubleMu10_v1);
