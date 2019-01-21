@@ -12,7 +12,7 @@ git clone https://github.com/boundino/BmesonRun2018.git
 ln -s BmesonRun2018/MCprod/GenericAnalyzer .
 cp BmesonRun2018/MCprod/GenericAnalyzer/test/demoanalyzer_cfg.py .
 
-cp BmesonRun2018/MCprod/run_mc_gensim_cmssw94X.sh .
+cp BmesonRun2018/MCprod/run_mc_gensim_embedded_cmssw103X.sh .
 ln -s BmesonRun2018/MCprod/utility.shinc .
 
 scram b -j4

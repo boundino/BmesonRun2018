@@ -4,7 +4,7 @@
 
 source utility.shinc
 
-igs=(6)
+igs=(0)
 ips=(1 2 3 4 5) # all: ({0..5})
 
 #####
