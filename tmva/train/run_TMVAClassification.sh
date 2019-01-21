@@ -17,6 +17,10 @@ output=rootfiles/TMVA_Psi2S
 
 tmp=$(date +%y%m%d%h%m%s)
 
+##
+
+[[ $# -eq 0 ]] && echo "usage: ./run_TMVAClassification.sh [train] [draw curves]"
+
 g++ TMVAClassification.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o TMVAClassification_${tmp}.exe || exit 1
 g++ guivariables.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guivariables_${tmp}.exe || exit 1
 g++ guiefficiencies.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guiefficiencies_${tmp}.exe || exit 1
