@@ -1,1 +1,1 @@
-/afs/lns.mit.edu/user/jwang/xjjcuti.h
+/afs/cern.ch/user/w/wangj/public/csetup/xjjlibs/xjjc/xjjcuti.h
