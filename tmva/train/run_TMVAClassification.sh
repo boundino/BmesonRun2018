@@ -15,7 +15,7 @@ cutb="${cut}&&Bmass>3.74&&Bmass<3.83"
 mkdir -p rootfiles
 output=rootfiles/TMVA_Psi2S
 
-tmp=$(date +%y%m%d%h%m%s)
+tmp=$(date +%y%m%d%H%M%S)
 
 ##
 
