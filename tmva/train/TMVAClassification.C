@@ -17,16 +17,20 @@
 #include "TMVA/TMVAGui.h"
 
 #include "xjjcuti.h"
-
-// #include "../prefilter.h"
+#include "TMVAClassification.h"
 
 int TMVAClassification(std::string inputSname, std::string inputBname, std::string mycuts, std::string mycutb, 
-                       std::string outputname, float ptmin, float ptmax, std::string mymethod = "")
+                       std::string outputname, float ptmin, float ptmax, std::string mymethod = "", std::string stage = "0,1,2,3,4,5,6,7,8,9,10")
 {
   mymethod = xjjc::str_replaceall(mymethod, " ", "");
   std::vector<std::string> methods(xjjc::str_divide(mymethod, ","));
-  std::string outfname(Form("%s_%s_%s_%s.root", outputname.c_str(),xjjc::str_replaceallspecial(mymethod).c_str(),
-                            xjjc::number_to_string(ptmin).c_str(), (ptmax<0?"inf":xjjc::number_to_string(ptmax).c_str())));
+  stage = xjjc::str_replaceall(stage, " ", "");
+  std::vector<int> stages;
+  for(auto& ss : xjjc::str_divide(stage, ",")) { stages.push_back(atoi(ss.c_str())); }
+
+  std::string outfname(Form("%s_%s_%s_%s_%s.root", outputname.c_str(),xjjc::str_replaceallspecial(mymethod).c_str(),
+                            xjjc::number_to_string(ptmin).c_str(), (ptmax<0?"inf":xjjc::number_to_string(ptmax).c_str()), 
+                            xjjc::str_replaceall(stage, ",", "-").c_str()));
   if(ptmax < 0) { ptmax = 1.e+10; }
 
   // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
@@ -119,9 +123,9 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
       for(auto& m : methods)
         {
           if(Use.find(m) != Use.end())
-            { Use[m] = 1; std::cout << __FUNCTION__ << ": Registered method " << m << std::endl; }
+            { Use[m] = 1; std::cout <<"==> " << __FUNCTION__ << ": Registered method " << m << std::endl; }
           else
-            { std::cout << __FUNCTION__ << ": error: unknown method " << m << "." << std::endl; continue; }
+            { std::cout << "==> Abort " << __FUNCTION__ << ": error: unknown method " << m << "." << std::endl; continue; }
         }
     }
   // <<------
@@ -196,7 +200,7 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   TMVA::Factory *factory = new TMVA::Factory( "TMVAClassification", outf,
                                               "!V:!Silent:Color:DrawProgressBar:Transformations=I;D;P;G,D:AnalysisType=Classification" );
 
-  TMVA::DataLoader *dataloader=new TMVA::DataLoader("dataset");
+  TMVA::DataLoader *dataloader = new TMVA::DataLoader("dataset");
   // If you wish to modify default settings
   // (please check "src/Config.h" to see all available global options)
   //
@@ -211,12 +215,19 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   //// dataloader->AddVariable( "var3",                "Variable 3", "units", 'F' );
   //// dataloader->AddVariable( "var4",                "Variable 4", "units", 'F' );
 
-  dataloader->AddVariable("Btrk1Pt"); // >
-  dataloader->AddVariable("Btrk2Pt"); // >
-  dataloader->AddVariable("Bchi2cl"); // >
-  dataloader->AddVariable("Bmass-3.096916-Btktkmass"); // <
-  dataloader->AddVariable("TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk1Phi)), 2) + pow(Bujeta-Btrk1Eta, 2))"); // <
-  dataloader->AddVariable("TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk2Phi)), 2) + pow(Bujeta-Btrk2Eta, 2))"); // <
+  std::string varinfo = "";
+  TString VarSet = "";
+  int nvar = 0;
+  for(auto& s : stages)
+    {
+      dataloader->AddVariable(mytmva::varlist[s].var);
+      VarSet += (Form(":VarProp[%d]=", nvar)+mytmva::varlist[s].cutsign);
+      varinfo += (";"+mytmva::varlist[s].varname);
+      std::cout << "==> " << __FUNCTION__ << ": Registered variable " << mytmva::varlist[s].var << std::endl;
+      nvar++;
+    }
+  if(!nvar) { std::cout << "==> Abort " << __FUNCTION__ << ": no variable registered." << std::endl; return 2; }
+  std::cout << "==> " << __FUNCTION__ << ": VarSet = " << VarSet << std::endl;
 
   // You can add so-called "Spectator variables", which are not used in the MVA training,
   // but will appear in the final "TestTree" produced by TMVA. This TestTree will contain the
@@ -315,31 +326,6 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   // src/MethoCuts.cxx, etc, or here: http://tmva.sourceforge.net/optionRef.html
   // it is possible to preset ranges in the option string in which the cut optimisation should be done:
   // "...:CutRangeMin[2]=-1:CutRangeMax[2]=1"...", where [2] is the third input variable
-
-
-  TString VarSet = "";
-  // if(varStage>=1){
-  //   VarSet+=":VarProp[0]=FMax";
-  //   VarSet+=":VarProp[1]=FMax";
-  //   VarSet+=":VarProp[2]=FMin";
-  //   VarSet+=":VarProp[3]=FMin";
-  //   VarSet+=":VarProp[4]=FMax";
-  //   VarSet+=":VarProp[5]=FMax";
-  //   VarSet+=":VarProp[6]=FMin";
-  //   VarSet+=":VarProp[7]=FMax";
-  //   VarSet+=":VarProp[8]=FMin";
-  //   VarSet+=":VarProp[9]=FMax";
-  //   VarSet+=":VarProp[10]=FMax";
-  //   VarSet+=":VarProp[11]=FMax";
-  // }
-  // if(varStage>=2){
-  // }
-  // if(varStage>=3){
-  //   VarSet+=":VarProp[12]=FMax";
-  //   VarSet+=":VarProp[13]=FMax";
-  //   VarSet+=":VarProp[14]=FMin";
-  //   VarSet+=":VarProp[15]=FMin";
-  // }
 
   // Cut optimisation
   if (Use["Cuts"])
@@ -619,6 +605,14 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
 
   // --------------------------------------------------------------
 
+  outf->cd("dataset");
+  TTree* info = new TTree("tmvainfo", "TMVA info");
+  info->Branch("cuts", &cuts);
+  info->Branch("cutb", &cutb);
+  info->Branch("var", &varinfo);
+  info->Fill();
+  info->Write();
+
   // Save the output
   outf->Close();
 
@@ -649,6 +643,8 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
 
 int main(int argc, char* argv[])
 {
+  if(argc==10)
+    { return TMVAClassification(argv[1], argv[2], argv[3], argv[4], argv[5], atof(argv[6]), atof(argv[7]), argv[8], argv[9]); }
   if(argc==9)
     { return TMVAClassification(argv[1], argv[2], argv[3], argv[4], argv[5], atof(argv[6]), atof(argv[7]), argv[8]); }
   if(argc==8)

@@ -8,6 +8,7 @@
 #include <TFile.h>
 
 #include <vector>
+#include <map>
 #include <string>
 #include <iostream>
 
@@ -32,20 +33,21 @@ namespace varcomp
   public:
     int nvar;
     std::vector<varele> varlist = {
-      //varele(name    , texformat                     , min, max
-      varele("mass"    , "m_{#mu#mu#pi#pi} (GeV/c^{2})", 3.6, 4.0),
-      varele("Qvalue"  , "Q (GeV/c^{2})"               , 0  , 0.5),
-      varele("dRtrk1"  , "#DeltaR(#pi_{1},J/#psi)"     , 0  , 0.5),
-      varele("dRtrk2"  , "#DeltaR(#pi_{2},J/#psi)"     , 0  , 0.5),
-      varele("costheta", "cos(#theta)"                 , -1 , 1),
-      varele("dls3D"   , "l_{xyz}/#sigma(l_{xyz})"     , 0  , 10),
-      varele("chi2cl"  , "vertex #chi^{2} prob"        , 0  , 1),
-      varele("trk1pt"  , "#pi_{1} p_{T} (GeV/c)"       , 0  , 10),
-      varele("trk2pt"  , "#pi_{2} p_{T} (GeV/c)"       , 0  , 10),
-      varele("alpha"   , "#alpha"                      , 0  , 3.2),
-      varele("trk1dca" , "trk1Dxy/trk1D0Err"           , 0  , 10),
-      varele("trk2dca" , "trk2Dxy/trk2D0Err"           , 0  , 10),
-      varele("dls2D"   , "l_{xy}/#sigma(l_{xy})"       , 0  , 10),
+      //varele(name       , texformat                                                      , min, max
+      varele("mass"       , "m_{#mu#mu#pi#pi} (GeV/c^{2})"                                 , 3.6, 4.0),
+      varele("dRtrk1"     , "#DeltaR(#pi_{1},J/#psi)"                                      , 0  , 0.5),
+      varele("dRtrk2"     , "#DeltaR(#pi_{2},J/#psi)"                                      , 0  , 0.5),
+      varele("Qvalue"     , "Q (GeV/c^{2})"                                                , 0  , 0.5),
+      varele("costheta"   , "cos(#theta)"                                                  , -1 , 1),
+      varele("alpha"      , "#alpha"                                                       , 0  , 3.2),
+      varele("dls3D"      , "l_{xyz}/#sigma(l_{xyz})"                                      , 0  , 10),
+      varele("dls2D"      , "l_{xy}/#sigma(l_{xy})"                                        , 0  , 10),
+      varele("chi2cl"     , "vertex #chi^{2} prob"                                         , 0  , 1),
+      varele("ptimbalance", "p_{T}(#pi_{1})-p_{T}(#pi_{2}) / p_{T}(#pi_{1})+p_{T}(#pi_{2})", 0  , 1),
+      varele("trk1pt"     , "#pi_{1} p_{T} (GeV/c)"                                        , 0  , 10),
+      varele("trk2pt"     , "#pi_{2} p_{T} (GeV/c)"                                        , 0  , 10),
+      varele("trk1dca"    , "trk1Dxy/trk1D0Err"                                            , 0  , 10),
+      varele("trk2dca"    , "trk2Dxy/trk2D0Err"                                            , 0  , 10),
     };
     std::vector<float> varval;
     std::vector<TH1F*> hist;
@@ -67,22 +69,23 @@ namespace varcomp
     bool fvalid;
     void refreshval(int j)
     {
-      std::vector<float> varnow = {
-        (float)fnt->Bmass[j], 
-        (float)(fnt->Bmass[j]-MASS_JPSI-fnt->Btktkmass[j]), 
-        (float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk1Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk1Eta[j], 2)), 
-        (float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk2Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk2Eta[j], 2)), 
-        (float)TMath::Cos(fnt->Bdtheta[j]), 
-        (float)TMath::Abs(fnt->BsvpvDistance[j]/fnt->BsvpvDisErr[j]), 
-        (float)fnt->Bchi2cl[j], 
-        (float)fnt->Btrk1Pt[j], 
-        (float)fnt->Btrk2Pt[j], 
-        (float)fnt->Balpha[j], 
-        (float)TMath::Abs(fnt->Btrk1Dxy[j]/fnt->Btrk1D0Err[j]), 
-        (float)TMath::Abs(fnt->Btrk2Dxy[j]/fnt->Btrk2D0Err[j]), 
-        (float)TMath::Abs(fnt->BsvpvDistance_2D[j]/fnt->BsvpvDisErr_2D[j]), 
+      std::map<std::string, float> varnow = {
+        std::pair<std::string, float>("mass", (float)fnt->Bmass[j]), 
+        std::pair<std::string, float>("dRtrk1", (float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk1Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk1Eta[j], 2))), 
+        std::pair<std::string, float>("dRtrk2", (float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk2Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk2Eta[j], 2))), 
+        std::pair<std::string, float>("Qvalue", (float)(fnt->Bmass[j]-MASS_JPSI-fnt->Btktkmass[j])), 
+        std::pair<std::string, float>("costheta", (float)TMath::Cos(fnt->Bdtheta[j])), 
+        std::pair<std::string, float>("dls3D", (float)TMath::Abs(fnt->BsvpvDistance[j]/fnt->BsvpvDisErr[j])), 
+        std::pair<std::string, float>("chi2cl", (float)fnt->Bchi2cl[j]), 
+        std::pair<std::string, float>("trk1pt", (float)fnt->Btrk1Pt[j]), 
+        std::pair<std::string, float>("trk2pt", (float)fnt->Btrk2Pt[j]), 
+        std::pair<std::string, float>("alpha", (float)fnt->Balpha[j]), 
+        std::pair<std::string, float>("trk1dca", (float)TMath::Abs(fnt->Btrk1Dxy[j]/fnt->Btrk1D0Err[j])), 
+        std::pair<std::string, float>("trk2dca", (float)TMath::Abs(fnt->Btrk2Dxy[j]/fnt->Btrk2D0Err[j])), 
+        std::pair<std::string, float>("dls2D", (float)TMath::Abs(fnt->BsvpvDistance_2D[j]/fnt->BsvpvDisErr_2D[j])), 
+        std::pair<std::string, float>("ptimbalance", (float)TMath::Abs((fnt->Btrk1Pt[j]-fnt->Btrk2Pt[j]) / (fnt->Btrk1Pt[j]+fnt->Btrk2Pt[j]))), 
       };
-      for(int i=0; i<nvar; i++) { varval[i] = varnow[i]; }
+      for(int i=0; i<nvar; i++) { varval[i] = varnow[varlist[i].varname]; }
     }
   };
 

@@ -13,16 +13,17 @@
 namespace mytmva
 {
   static TList* TMVAGui_keyContent;
-  void guivariables(std::string outputname, float ptmin, float ptmax, std::string mymethod);
+  void guivariables(std::string outputname, float ptmin, float ptmax, std::string mymethod, std::string stage = "0,1,2,3");
   void variables(std::string outfname);
   TList* GetKeyList( const TString& pattern );
 }
 
-void mytmva::guivariables(std::string outputname, float ptmin, float ptmax, std::string mymethod)
+void mytmva::guivariables(std::string outputname, float ptmin, float ptmax, std::string mymethod, std::string stage/* = "0,1,2,3"*/)
 {
   mymethod = xjjc::str_replaceall(mymethod, " ", "");
-  std::string outfname(Form("%s_%s_%s_%s.root", outputname.c_str(), xjjc::str_replaceallspecial(mymethod).c_str(), 
-                            xjjc::number_to_string(ptmin).c_str(), (ptmax<0?"inf":xjjc::number_to_string(ptmax).c_str())));
+  std::string outfname(Form("%s_%s_%s_%s_%s.root", outputname.c_str(), xjjc::str_replaceallspecial(mymethod).c_str(), 
+                            xjjc::number_to_string(ptmin).c_str(), (ptmax<0?"inf":xjjc::number_to_string(ptmax).c_str()), 
+                            xjjc::str_replaceall(stage, ",", "-").c_str()));
   mytmva::variables(outfname);
 }
 
@@ -85,7 +86,7 @@ TList* mytmva::GetKeyList( const TString& pattern )
 
 int main(int argc, char* argv[])
 {
-  if(argc==5)
-    { mytmva::guivariables(argv[1], atof(argv[2]), atof(argv[3]), argv[4]); return 0; }
+  if(argc==6)
+    { mytmva::guivariables(argv[1], atof(argv[2]), atof(argv[3]), argv[4], argv[5]); return 0; }
   return 1;
 }
