@@ -57,7 +57,7 @@ void mytmva::effvar(std::vector<std::string> outfname, std::string method)
   TCanvas* c = new TCanvas( "c", "", 200, 0, 650, 500 );
   c->SetGrid();
   c->SetTicks();
-  c->SetFrameFillColor(10);
+  // c->SetFrameFillColor(10);
 
   TString xtit = "Signal efficiency";
   TString ytit = "Background rejection";

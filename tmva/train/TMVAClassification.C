@@ -15,6 +15,7 @@
 #include "TMVA/DataLoader.h"
 #include "TMVA/Tools.h"
 #include "TMVA/TMVAGui.h"
+#include "TMVA/Config.h"
 
 #include "xjjcuti.h"
 #include "TMVAClassification.h"
@@ -205,7 +206,7 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   // (please check "src/Config.h" to see all available global options)
   //
   //    (TMVA::gConfig().GetVariablePlotting()).fTimesRMS = 8.0;
-  //    (TMVA::gConfig().GetIONames()).fWeightFileDir = "myWeightDirectory";
+  // (TMVA::gConfig().GetIONames()).fWeightFileDir = Form("dataset/weights/%s", outputstr.c_str());
 
   // Define the input variables that shall be used for the MVA training
   // note that you may also use variable expressions, such as: "3*var1/var2*abs(var3)"
@@ -623,6 +624,10 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   delete dataloader;
   // Launch the GUI for the root macros
   if (!gROOT->IsBatch()) TMVA::TMVAGui( outfname.c_str() );
+
+  std::string outputstr = xjjc::str_replaceallspecial(outfname);
+  gSystem->Exec(Form("mkdir -p dataset/weights/%s", outputstr.c_str()));
+  gSystem->Exec(Form("mv dataset/weights/*.* dataset/weights/%s/", outputstr.c_str()));
 
   return 0;
 }
