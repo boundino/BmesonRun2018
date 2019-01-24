@@ -8,31 +8,50 @@ ptmin=20
 ptmax=-1
 algo="BDT,BDTG,CutsGA,CutsSA,LD"
 
-stages="0,4,5,1,2,3,6,7,8,9,10"
+stages="0,4,5,1,2,3,6,7,8,9,10" # see definition below #
 sequence=1
+
+######################################################################################################################################
+#                                                                                                                                    #
+#  0  // ("chi2cl"     , "Bchi2cl"                                                                                        , "FMax")  #
+#  1  // ("dRtrk1"     , "dRtrk1 := TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk1Phi)),2) + pow(Bujeta-Btrk1Eta,2))", "FMin")  #
+#  2  // ("dRtrk2"     , "dRtrk2 := TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk2Phi)),2) + pow(Bujeta-Btrk2Eta,2))", "FMin")  #
+#  3  // ("Qvalue"     , "Qvalue := (Bmass-3.096916-Btktkmass)"                                                           , "FMin")  #
+#  4  // ("alpha"      , "Balpha"                                                                                         , "FMin")  #
+#  5  // ("costheta"   , "costheta := TMath::Cos(Bdtheta)"                                                                , "FMax")  #
+#  6  // ("dls3D"      , "dls3D := TMath::Abs(BsvpvDistance/BsvpvDisErr)"                                                 , "FMax")  #
+#  7  // ("dls2D"      , "dls2D := TMath::Abs(BsvpvDistance_2D/BsvpvDisErr_2D)"                                           , "FMax")  #
+#  8  // ("trk1pt"     , "Btrk1Pt"                                                                                        , "FMax")  #
+#  9  // ("trk2pt"     , "Btrk2Pt"                                                                                        , "FMax")  #
+#  10 // ("ptimbalance", "trkptimba := TMath::Abs((Btrk1Pt-Btrk2Pt) / (Btrk1Pt+Btrk2Pt))"                                 , "FMax")  #
+#                                                                                                                                    #
+######################################################################################################################################
 
 ## ===== do not change lines below =====
 
 cuts="${cut}&&Bgen==23333"
 cutb="${cut}&&Bmass>3.74&&Bmass<3.83"
-mkdir -p rootfiles
-output=rootfiles/TMVA_Psi2S
+rootfiles=rootfiles2
 
+##
+mkdir -p $rootfiles
+output=$rootfiles/TMVA_Psi2S
 tmp=$(date +%y%m%d%H%M%S)
 
 ##
-
-[[ $# -eq 0 ]] && echo "usage: ./run_TMVAClassification.sh [train] [draw curves]"
+[[ $# -eq 0 ]] && echo "usage: ./run_TMVAClassification.sh [train] [draw curves] [draw curve vs. var]"
 
 g++ TMVAClassification.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o TMVAClassification_${tmp}.exe || exit 1
-g++ guivariables.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guivariables_${tmp}.exe || exit 1
-g++ guiefficiencies.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guiefficiencies_${tmp}.exe || exit 1
-g++ guieffvar.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guieffvar_${tmp}.exe || exit 1
+g++ guivariables.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guivariables_${tmp}.exe || { rm *_${tmp}.exe ; exit 1 ; }
+g++ guiefficiencies.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guiefficiencies_${tmp}.exe || { rm *_${tmp}.exe ; exit 1 ; }
+g++ guieffvar.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guieffvar_${tmp}.exe || { rm *_${tmp}.exe ; exit 1 ; }
 
 stage=$stages
 while [[ $stage == *,* ]]
 do
+# train
     [[ ${1:-0} -eq 1 ]] && { ./TMVAClassification_${tmp}.exe $inputs $inputb "$cuts" "$cutb" $output $ptmin $ptmax "$algo" "$stage"; }
+# draw curves
     [[ ${2:-0} -eq 1 && $stage == $stages ]] && { 
         ./guivariables_${tmp}.exe $output $ptmin $ptmax "$algo" "$stage"
         ./guiefficiencies_${tmp}.exe $output $ptmin $ptmax "$algo" "$stage"
@@ -41,10 +60,8 @@ do
     while [[ $stage != *, ]] ; do stage=${stage%%[0-9]} ; done ;
     stage=${stage%%,}
 done
+# draw curve vs. var
 [[ ${3:-0} -eq 1 && $sequence -eq 1 ]] && ./guieffvar_${tmp}.exe $output $ptmin $ptmax "$algo" "$stages"
 
-rm guieffvar_${tmp}.exe
-rm guiefficiencies_${tmp}.exe
-rm guivariables_${tmp}.exe
-rm TMVAClassification_${tmp}.exe
-
+##
+rm *_${tmp}.exe

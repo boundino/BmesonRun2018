@@ -51,13 +51,14 @@ void mytmva::guieffvar(std::string outputname, float ptmin, float ptmax, std::st
 
 void mytmva::effvar(std::vector<std::string> outfname, std::string method)
 {
-  // gROOT->ProcessLine("#include <string>");
   Float_t x1 = 0, x2 = 1, y1 = 0.2, y2 = 1.0;
 
   // frame
   TCanvas* c = new TCanvas( "c", "", 200, 0, 650, 500 );
   c->SetGrid();
   c->SetTicks();
+  c->SetFrameFillColor(10);
+
   TString xtit = "Signal efficiency";
   TString ytit = "Background rejection";
   TString ftit = ytit + " versus " + xtit;

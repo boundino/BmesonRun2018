@@ -6,7 +6,10 @@
 #include <TKey.h>
 #include <TList.h>
 #include "TMVA/efficiencies.h"
+#include "TMVA/mvas.h"
+#include "TMVA/correlations.h"
 
+#include "mvaeffs.h"
 #include "xjjcuti.h"
 
 namespace mytmva
@@ -49,6 +52,9 @@ void mytmva::efficiencies(std::string outfname)
   // TMVA::efficiencies(dataset.Data(), outfname.c_str(), 1);
   TMVA::efficiencies(dataset.Data(), outfname.c_str(), 2);
   // TMVA::efficiencies(dataset.Data(), outfname.c_str(), 3);
+  TMVA::mvas(dataset.Data(), outfname.c_str(), TMVA::kCompareType);
+  TMVA::correlations(dataset.Data(), outfname.c_str());
+  mytmva::mvaeffs(dataset.Data(), outfname.c_str(), 1000, 1000);
 
   gSystem->Exec(Form("rm %s/plots/*.png", dataset.Data()));
   gSystem->Exec(Form("mkdir -p %s/plots/%s", dataset.Data(), outputstr.c_str()));
