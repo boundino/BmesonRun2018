@@ -33,6 +33,7 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
                             xjjc::number_to_string(ptmin).c_str(), (ptmax<0?"inf":xjjc::number_to_string(ptmax).c_str()), 
                             xjjc::str_replaceall(stage, ",", "-").c_str()));
   if(ptmax < 0) { ptmax = 1.e+10; }
+  std::string outputstr = xjjc::str_replaceallspecial(outfname);
 
   // The explicit loading of the shared libTMVA is done in TMVAlogon.C, defined in .rootrc
   // if you use your private .rootrc, or run from a different directory, please copy the
@@ -206,7 +207,8 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   // (please check "src/Config.h" to see all available global options)
   //
   //    (TMVA::gConfig().GetVariablePlotting()).fTimesRMS = 8.0;
-  // (TMVA::gConfig().GetIONames()).fWeightFileDir = Form("dataset/weights/%s", outputstr.c_str());
+  gSystem->Exec(Form("mkdir -p dataset/weights/%s", outputstr.c_str()));
+  (TMVA::gConfig().GetIONames()).fWeightFileDir = Form("weights/%s", outputstr.c_str());
 
   // Define the input variables that shall be used for the MVA training
   // note that you may also use variable expressions, such as: "3*var1/var2*abs(var3)"
@@ -222,7 +224,8 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   for(auto& s : stages)
     {
       dataloader->AddVariable(mytmva::varlist[s].var);
-      VarSet += (Form(":VarProp[%d]=", nvar)+mytmva::varlist[s].cutsign);
+      if(mytmva::varlist[s].cutsign != "")
+        { VarSet += (Form(":VarProp[%d]=", nvar)+mytmva::varlist[s].cutsign); }
       varinfo += (";"+mytmva::varlist[s].varname);
       std::cout << "==> " << __FUNCTION__ << ": Registered variable " << mytmva::varlist[s].var << std::endl;
       nvar++;
@@ -625,9 +628,7 @@ int TMVAClassification(std::string inputSname, std::string inputBname, std::stri
   // Launch the GUI for the root macros
   if (!gROOT->IsBatch()) TMVA::TMVAGui( outfname.c_str() );
 
-  std::string outputstr = xjjc::str_replaceallspecial(outfname);
-  gSystem->Exec(Form("mkdir -p dataset/weights/%s", outputstr.c_str()));
-  gSystem->Exec(Form("mv dataset/weights/*.* dataset/weights/%s/", outputstr.c_str()));
+  // gSystem->Exec(Form("mv dataset/weights/*.* dataset/weights/%s/", outputstr.c_str()));
 
   return 0;
 }
