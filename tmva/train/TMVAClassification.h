@@ -43,30 +43,42 @@ namespace mytmva
   class varval
   {
   public:
-    varval(mytmva::ntuple* nt) : fnt(nt) { fval.clear(); }
-    varval(TTree* nttree) : fnt(0) { fnt = new mytmva::ntuple(nttree); fval.clear(); }
-    float getval(std::string varname, int j) { refreshval(j); return fval[varname]; }
+    varval(mytmva::ntuple* nt) : fnt(nt), fvalid(true) { fval.clear(); fvalid = checkvarlist(); }
+    varval(TTree* nttree) : fnt(0), fvalid(true) { fnt = new mytmva::ntuple(nttree); fval.clear(); fvalid = checkvarlist(); }
+    float getval(std::string varname, int j) { refreshval(j); if(fval.find(varname) == fval.end()) { std::cout<<"==> "<<__FUNCTION__<<": invalid varname key "<<varname<<std::endl; return 0; } ; return fval[varname]; }
     mytmva::ntuple* getnt() { return fnt; }
+    bool isvalid() { return fvalid; }
 
   private:
+    bool fvalid;
     std::map<std::string, float> fval;
     mytmva::ntuple* fnt; //~
     void refreshval(int j)
     {
-      fval["Bmass"]     = (float)fnt->Bmass[j];
-      fval["dRtrk1"]    = (float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk1Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk1Eta[j], 2));
-      fval["dRtrk2"]    = (float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk2Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk2Eta[j], 2));
-      fval["Qvalue"]    = (float)(fnt->Bmass[j]-3.096916-fnt->Btktkmass[j]);
-      fval["costheta"]  = (float)TMath::Cos(fnt->Bdtheta[j]);
-      fval["dls3D"]     = (float)TMath::Abs(fnt->BsvpvDistance[j]/fnt->BsvpvDisErr[j]);
-      fval["Bchi2cl"]   = (float)fnt->Bchi2cl[j];
-      fval["Btrk1pt"]   = (float)fnt->Btrk1Pt[j];
-      fval["Btrk2pt"]   = (float)fnt->Btrk2Pt[j];
-      fval["Balpha"]    = (float)fnt->Balpha[j];
-      fval["Btrk1dca"]  = (float)TMath::Abs(fnt->Btrk1Dxy[j]/fnt->Btrk1D0Err[j]);
-      fval["Btrk2dca"]  = (float)TMath::Abs(fnt->Btrk2Dxy[j]/fnt->Btrk2D0Err[j]);
-      fval["dls2D"]     = (float)TMath::Abs(fnt->BsvpvDistance_2D[j]/fnt->BsvpvDisErr_2D[j]);
-      fval["trkptimba"] = (float)TMath::Abs((fnt->Btrk1Pt[j]-fnt->Btrk2Pt[j]) / (fnt->Btrk1Pt[j]+fnt->Btrk2Pt[j]));
+      fval["Bmass"]     = j<0?0:(float)fnt->Bmass[j];
+      fval["dRtrk1"]    = j<0?0:(float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk1Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk1Eta[j], 2));
+      fval["dRtrk2"]    = j<0?0:(float)TMath::Sqrt(pow(TMath::ACos(TMath::Cos(fnt->Bujphi[j] - fnt->Btrk2Phi[j])), 2) + pow(fnt->Bujeta[j] - fnt->Btrk2Eta[j], 2));
+      fval["Qvalue"]    = j<0?0:(float)(fnt->Bmass[j]-3.096916-fnt->Btktkmass[j]);
+      fval["costheta"]  = j<0?0:(float)TMath::Cos(fnt->Bdtheta[j]);
+      fval["dls3D"]     = j<0?0:(float)TMath::Abs(fnt->BsvpvDistance[j]/fnt->BsvpvDisErr[j]);
+      fval["Bchi2cl"]   = j<0?0:(float)fnt->Bchi2cl[j];
+      fval["Btrk1Pt"]   = j<0?0:(float)fnt->Btrk1Pt[j];
+      fval["Btrk2Pt"]   = j<0?0:(float)fnt->Btrk2Pt[j];
+      fval["Balpha"]    = j<0?0:(float)fnt->Balpha[j];
+      fval["Btrk1dca"]  = j<0?0:(float)TMath::Abs(fnt->Btrk1Dxy[j]/fnt->Btrk1D0Err[j]);
+      fval["Btrk2dca"]  = j<0?0:(float)TMath::Abs(fnt->Btrk2Dxy[j]/fnt->Btrk2D0Err[j]);
+      fval["dls2D"]     = j<0?0:(float)TMath::Abs(fnt->BsvpvDistance_2D[j]/fnt->BsvpvDisErr_2D[j]);
+      fval["trkptimba"] = j<0?0:(float)TMath::Abs((fnt->Btrk1Pt[j]-fnt->Btrk2Pt[j]) / (fnt->Btrk1Pt[j]+fnt->Btrk2Pt[j]));
+      fval["By"]        = j<0?0:(float)fnt->By[j];
+      fval["Btrk1Eta"]  = j<0?0:(float)fnt->Btrk1Eta[j];
+      fval["Btrk2Eta"]  = j<0?0:(float)fnt->Btrk2Eta[j];
+    }
+    bool checkvarlist() 
+    {  
+      refreshval(-1);
+      for(auto& vn : varlist) 
+        { if(fval.find(vn.varname) == fval.end()) { std::cout<<"==> "<<__FUNCTION__<<": invalid varname key "<<vn.varname<<std::endl; return false; } }
+      return true;
     }
   };
 

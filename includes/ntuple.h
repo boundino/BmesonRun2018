@@ -52,6 +52,7 @@ namespace mytmva
     float  Btrk2Dxy[MAX_XB];
     float  Btrk1D0Err[MAX_XB];
     float  Btrk2D0Err[MAX_XB];
+    float  By[MAX_XB];
 
   private:
     TTree* fnt;
@@ -83,7 +84,6 @@ namespace mytmva
     float  Btrk2PixelHit[MAX_XB];
     float  Btrk2StripHit[MAX_XB];
     float  Btrk2PtErr[MAX_XB];
-    float  By[MAX_XB];
   };
 }
 
