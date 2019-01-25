@@ -10,34 +10,55 @@ ptmin=20
 ptmax=-1
 algo="BDT,BDTG,CutsGA,CutsSA,LD"
 
-stages="0,10,9,7,6,3,1,2,4,5,8" # see definition below #
+stages="0,10,9,8,1,2,4,5,6,7" # see definition below #
 sequence=0
 
-####################################################################################################################################
-#                                                                                                                                  #
-#  0  :  ("Bchi2cl"  , "Bchi2cl"                                                                                        , "FMax")  # 
-#  1  :  ("dRtrk1"   , "dRtrk1 := TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk1Phi)),2) + pow(Bujeta-Btrk1Eta,2))", "FMin")  # 
-#  2  :  ("dRtrk2"   , "dRtrk2 := TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk2Phi)),2) + pow(Bujeta-Btrk2Eta,2))", "FMin")  # 
-#  3  :  ("Qvalue"   , "Qvalue := (Bmass-3.096916-Btktkmass)"                                                           , "FMin")  # 
-#  4  :  ("Balpha"   , "Balpha"                                                                                         , "FMin")  # 
-#  5  :  ("costheta" , "costheta := TMath::Cos(Bdtheta)"                                                                , "FMax")  # 
-#  6  :  ("dls3D"    , "dls3D := TMath::Abs(BsvpvDistance/BsvpvDisErr)"                                                 , "FMax")  # 
-#  7  :  ("dls2D"    , "dls2D := TMath::Abs(BsvpvDistance_2D/BsvpvDisErr_2D)"                                           , "FMax")  # 
-#  8  :  ("Btrk1pt"  , "Btrk1Pt"                                                                                        , "FMax")  # 
-#  9  :  ("Btrk2pt"  , "Btrk2Pt"                                                                                        , "FMax")  # 
-#  10 :  ("trkptimba", "trkptimba := TMath::Abs((Btrk1Pt-Btrk2Pt) / (Btrk1Pt+Btrk2Pt))"                                 , "FMax")  # 
-#                                                                                                                                  #
-####################################################################################################################################
+## ===== do not change the lines below =====
 
-## ===== do not change lines below =====
+varlist=(
+    '#  0  :  ("Bchi2cl"  , "Bchi2cl"                                                                                        , "FMax")  #' 
+    '#  1  :  ("dRtrk1"   , "dRtrk1 := TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk1Phi)),2) + pow(Bujeta-Btrk1Eta,2))", "FMin")  #' 
+    '#  2  :  ("dRtrk2"   , "dRtrk2 := TMath::Sqrt(pow(TMath::ACos(TMath::Cos(Bujphi-Btrk2Phi)),2) + pow(Bujeta-Btrk2Eta,2))", "FMin")  #' 
+    '#  3  :  ("Qvalue"   , "Qvalue := (Bmass-3.096916-Btktkmass)"                                                           , "FMin")  #' 
+    '#  4  :  ("Balpha"   , "Balpha"                                                                                         , "FMin")  #' 
+    '#  5  :  ("costheta" , "costheta := TMath::Cos(Bdtheta)"                                                                , "FMax")  #' 
+    '#  6  :  ("dls3D"    , "dls3D := TMath::Abs(BsvpvDistance/BsvpvDisErr)"                                                 , "FMax")  #' 
+    '#  7  :  ("dls2D"    , "dls2D := TMath::Abs(BsvpvDistance_2D/BsvpvDisErr_2D)"                                           , "FMax")  #' 
+    '#  8  :  ("Btrk1pt"  , "Btrk1Pt"                                                                                        , "FMax")  #' 
+    '#  9  :  ("Btrk2pt"  , "Btrk2Pt"                                                                                        , "FMax")  #' 
+    '#  10 :  ("trkptimba", "trkptimba := TMath::Abs((Btrk1Pt-Btrk2Pt) / (Btrk1Pt+Btrk2Pt))"                                 , "FMax")  #' 
+    '#  11 :  ("By"       , "By"                                                                                             , ""    )  #'
+    '#  12 :  ("Bmass"    , "Bmass"                                                                                          , ""    )  #'
+    '#  13 :  ("Btrk1Eta" , "Btrk1Eta"                                                                                       , ""    )  #'
+    '#  14 :  ("Btrk2Eta" , "Btrk2Eta"                                                                                       , ""    )  #'
+)
+
 
 cuts="${cut}&&Bgen==23333"
-cutb="${cut}&&Bmass>3.74&&Bmass<3.83"
+cutb="${cut}&&((Bmass>3.74&&Bmass<3.83) || (Bmass>3.60&&Bmass<3.65))"
 rootfiles=rootfiles
+output=$rootfiles/TMVA_Psi2S
 
+## ===== do not do not do not change the lines below =====
+IFS=','; allstages=($stages); unset IFS;
+echo -e '
+
+####################################################################################################################################
+#                                                Variables \e[1;32m(To be used)\e[0m                                                            #
+####################################################################################################################################
+#                                                                                                                                  #'
+vv=0
+while(( $vv < ${#varlist[@]})) ; do
+    for ss in ${allstages[@]} ; do [[ $ss == $vv ]] && { echo -en "\e[1;32m" ; break ; } ; done ;
+    echo -e "${varlist[vv]}\e[0m"
+    vv=$((vv+1))
+done
+echo '#                                                                                                                                  #
+####################################################################################################################################
+
+'
 ##
 mkdir -p $rootfiles
-output=$rootfiles/TMVA_Psi2S
 tmp=$(date +%y%m%d%H%M%S)
 
 ##
@@ -53,16 +74,18 @@ stage=$stages
 while [[ $stage == *,* ]]
 do
 # train
-    [[ ${1:-0} -eq 1 ]] && { ./TMVAClassification_${tmp}.exe $inputs $inputb "$cuts" "$cutb" $output $ptmin $ptmax "$algo" "$stage"; }
-# draw curves
-    [[ ${2:-0} -eq 1 && $stage == $stages ]] && { 
-        ./guivariables_${tmp}.exe $output $ptmin $ptmax "$algo" "$stage"
-        ./guiefficiencies_${tmp}.exe $output $ptmin $ptmax "$algo" "$stage"
-    }
+    [[ ${1:-0} -eq 1 ]] && { ./TMVAClassification_${tmp}.exe $inputs $inputb "$cuts" "$cutb" $output $ptmin $ptmax "$algo" "$stage"; } 
     [[ $sequence -eq 0 ]] && break;
     while [[ $stage != *, ]] ; do stage=${stage%%[0-9]} ; done ;
     stage=${stage%%,}
 done
+
+# draw curves
+[[ ${2:-0} -eq 1 ]] && { 
+    ./guivariables_${tmp}.exe $output $ptmin $ptmax "$algo" "$stages"
+    ./guiefficiencies_${tmp}.exe $output $ptmin $ptmax "$algo" "$stages"
+}
+
 # draw curve vs. var
 [[ ${3:-0} -eq 1 && $sequence -eq 1 ]] && ./guieffvar_${tmp}.exe $output $ptmin $ptmax "$algo" "$stages"
 

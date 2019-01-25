@@ -56,6 +56,10 @@ means the variables that will be used and their order. The definition is as foll
 #  8  :  ("Btrk1pt"  , "Btrk1Pt"                                                                                        , "FMax")  #
 #  9  :  ("Btrk2pt"  , "Btrk2Pt"                                                                                        , "FMax")  #
 #  10 :  ("trkptimba", "trkptimba := TMath::Abs((Btrk1Pt-Btrk2Pt) / (Btrk1Pt+Btrk2Pt))"                                 , "FMax")  #
+#  11 :  ("By"       , "By"                                                                                             , ""    )  #
+#  12 :  ("Bmass"    , "Bmass"                                                                                          , ""    )  #
+#  13 :  ("Btrk1Eta" , "Btrk1Eta"                                                                                       , ""    )  #
+#  14 :  ("Btrk2Eta" , "Btrk2Eta"                                                                                       , ""    )  #
 #                                                                                                                                  #
 ####################################################################################################################################
 ```

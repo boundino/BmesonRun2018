@@ -21,7 +21,7 @@ namespace mytmva
     ~ntuple() { fnt = 0; }
     bool passedpre(int j);
     bool passedsig(int j) { return Bgen[j]==23333; }
-    bool passedbkg(int j) { return (Bmass[j]>3.74 && Bmass[j]<3.83); }
+    bool passedbkg(int j) { return ((Bmass[j]>3.74 && Bmass[j]<3.83) || (Bmass[j]>3.60 && Bmass[j]<3.65)); }
     bool isweight() { return fweight; }
 
     TTree* getnt() { return fnt; }
