@@ -15,6 +15,8 @@ void drawvarcomp(std::string inputdir, std::vector<std::string> legtitle)
   std::string outputname = xjjc::str_replaceallspecial(inputdir);
 
   TFile* inf = TFile::Open(Form("%s.root", inputdir.c_str()));
+  TTree* note = (TTree*)inf->Get("note");
+  std::string* texpt = 0; note->SetBranchAddress("texpt", &texpt); note->GetEntry(0);
   std::vector<varcomp::variable*> var;
   int n = 0;
   while(true)
@@ -58,6 +60,7 @@ void drawvarcomp(std::string inputdir, std::vector<std::string> legtitle)
         }
       xjjroot::drawCMS();
       leg->Draw();
+      xjjroot::drawtex(0.22, 0.82, (*texpt + " GeV/c").c_str(), 0.045, 12, 62);
       if((vv+1)%npad == 0 || vv == nvar-1)
         {
           c->SaveAs(Form("plots/cvar_%s_%d.pdf", outputname.c_str(), cc));
