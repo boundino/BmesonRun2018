@@ -94,8 +94,8 @@ bool mytmva::ntuple::passedpre(int j)
       TMath::Abs(Bmumumass[j]-3.096916) < 0.05 && TMath::Abs(Bujeta[j]) < 2.0 && // jpsi
       Btrk1highPurity[j] &&  TMath::Abs(Btrk1Eta[j]) < 2 && Btrk1Pt[j] > 0.9 && (Btrk1PixelHit[j]+Btrk1StripHit[j]) > 11 && TMath::Abs(Btrk1PtErr[j]/Btrk1Pt[j]) < 0.1 && // trk1
       Btrk2highPurity[j] &&  TMath::Abs(Btrk2Eta[j]) < 2 && Btrk2Pt[j] > 0.9 && (Btrk2PixelHit[j]+Btrk2StripHit[j]) > 11 && TMath::Abs(Btrk2PtErr[j]/Btrk2Pt[j]) < 0.1 && // trk2
-      TMath::Abs(By[j]) < 2.0 && Bchi2cl[j] > 0.1 && // B
-      Btktkmass[j] > 0.47 // 
+      // Btktkmass[j] > 0.47 && // ! tktkmass
+      TMath::Abs(By[j]) < 2.0 && Bchi2cl[j] > 0.1 // B
       ) return true;
   return false;
   /*
