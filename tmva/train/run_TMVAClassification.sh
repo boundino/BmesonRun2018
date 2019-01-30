@@ -2,13 +2,16 @@
 
 ##
 ptmin=10 ; ptmax=-1 ;
-inputs=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190115_Hydjet_Pythia8_Psi2SX3872_prompt_20181231_pt5tkpt0p7dls0_pthatweight.root ; output=rootfiles/TMVA_XPsi2S ;
+# inputs=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190115_Hydjet_Pythia8_Psi2SX3872_prompt_20181231_pt5tkpt0p7dls0_pthatweight.root ; output=rootfiles/TMVA_XPsi2S ;
 # inputs=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190115_Hydjet_Pythia8_Psi2SToJpsiPiPi_prompt_20181231_pt5tkpt0p7dls0_pthatweight.root ; output=rootfiles/TMVA_Psi2S ;
-# inputs=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190115_Hydjet_Pythia8_X3872ToJpsiRho_prompt_20181231_pt5tkpt0p7dls0_pthatweight.root ; output=rootfiles/TMVA_X ;
+inputs=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190115_Hydjet_Pythia8_X3872ToJpsiRho_prompt_20181231_pt5tkpt0p7dls0_pthatweight.root ; output=rootfiles/TMVA_X ;
 inputb=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20181220_HIDoubleMuon_HIRun2018A_PromptReco_v1v2_1031_NoJSON_skimhltBsize_ntmix_Bpt${ptmin}.root
-inputm=$inputb
-outputmva=/export/d00/scratch/jwang/BntupleRun2018/output_mva
-cut="Bmu1TMOneStationTight && Bmu1InPixelLayer > 1 && (Bmu1InPixelLayer+Bmu1InStripLayer) > 6 && Bmu1dxyPV < 0.3 && Bmu1dzPV < 20 && Bmu1isGlobalMuon && TMath::Abs(Bmu1eta)<2.0 && Bmu1pt > 1.5 && Bmu2TMOneStationTight && Bmu2InPixelLayer > 1 && (Bmu2InPixelLayer+Bmu2InStripLayer) > 6 && Bmu2dxyPV < 0.3 && Bmu2dzPV < 20 && Bmu2isGlobalMuon && TMath::Abs(Bmu2eta)<2.0 && Bmu2pt > 1.5 && TMath::Abs(Bmumumass-3.096916) < 0.05 && TMath::Abs(Bujeta) < 1.2 && Btrk1highPurity &&  TMath::Abs(Btrk1Eta) < 2 && Btrk1Pt > 0.9 && (Btrk1PixelHit+Btrk1StripHit) > 11 && TMath::Abs(Btrk1PtErr/Btrk1Pt) < 0.1 && Btrk2highPurity &&  TMath::Abs(Btrk2Eta) < 2 && Btrk2Pt > 0.9 && (Btrk2PixelHit+Btrk2StripHit) > 11 && TMath::Abs(Btrk2PtErr/Btrk2Pt) < 0.1 && TMath::Abs(By) < 2.0 && Bchi2cl > 0.1 && Btktkmass > 0.47 && BsvpvDisErr>1.e-5 && BsvpvDisErr_2D>1.e-5"
+
+inputm=$inputb ; outputmva=/export/d00/scratch/jwang/BntupleRun2018/output_mva ;
+# inputm=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190115_Hydjet_Pythia8_Psi2SToJpsiPiPi_prompt_20181231_pt5tkpt0p7dls0_pthatweight.root ; outputmva=/export/d00/scratch/jwang/BntupleRun2018/output_mva_mcPsi ;
+# inputm=/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190115_Hydjet_Pythia8_X3872ToJpsiRho_prompt_20181231_pt5tkpt0p7dls0_pthatweight.root ; outputmva=/export/d00/scratch/jwang/BntupleRun2018/output_mva_mcX ;
+
+cut="Bmu1TMOneStationTight && Bmu1InPixelLayer > 1 && (Bmu1InPixelLayer+Bmu1InStripLayer) > 6 && Bmu1dxyPV < 0.3 && Bmu1dzPV < 20 && Bmu1isGlobalMuon && TMath::Abs(Bmu1eta)<2.0 && Bmu1pt > 1.5 && Bmu2TMOneStationTight && Bmu2InPixelLayer > 1 && (Bmu2InPixelLayer+Bmu2InStripLayer) > 6 && Bmu2dxyPV < 0.3 && Bmu2dzPV < 20 && Bmu2isGlobalMuon && TMath::Abs(Bmu2eta)<2.0 && Bmu2pt > 1.5 && TMath::Abs(Bmumumass-3.096916) < 0.05 && TMath::Abs(Bujeta) < 2.0 && Btrk1highPurity &&  TMath::Abs(Btrk1Eta) < 2 && Btrk1Pt > 0.9 && (Btrk1PixelHit+Btrk1StripHit) > 11 && TMath::Abs(Btrk1PtErr/Btrk1Pt) < 0.1 && Btrk2highPurity &&  TMath::Abs(Btrk2Eta) < 2 && Btrk2Pt > 0.9 && (Btrk2PixelHit+Btrk2StripHit) > 11 && TMath::Abs(Btrk2PtErr/Btrk2Pt) < 0.1 && TMath::Abs(By) < 2.0 && Bchi2cl > 0.1 && Btktkmass > 0.47 && BsvpvDisErr>1.e-5 && BsvpvDisErr_2D>1.e-5"
 algo="BDT,BDTG,CutsGA,CutsSA,LD"
 
 stages="0,10,1,2,9,8,4,5,6,7" # see definition below #
@@ -70,6 +73,14 @@ g++ guivariables.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guivari
 g++ guiefficiencies.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guiefficiencies_${tmp}.exe || { rm *_${tmp}.exe ; exit 1 ; }
 g++ guieffvar.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o guieffvar_${tmp}.exe || { rm *_${tmp}.exe ; exit 1 ; }
 g++ mvaprod.C $(root-config --libs --cflags) -lTMVA -lTMVAGui -g -o mvaprod_${tmp}.exe || { rm *_${tmp}.exe ; exit 1 ; }
+
+[[ ${1:-0} -eq 1 ]] && {
+    conf=
+    echo -e "\e[2m==> Do you really want to run\e[0m \e[1mTMVAClassification.C\e[0m \e[2m(it might be very slow)?\e[0m [y/n]"
+    read conf
+    while [[ $conf != 'y' && $conf != 'n' ]] ; do { echo "warning: input [y/n]" ; read conf ; } ; done ;
+    [[ $conf == 'n' ]] && { rm *_${tmp}.exe ; exit ; }
+}
 
 stage=$stages
 while [[ $stage == *,* ]]
