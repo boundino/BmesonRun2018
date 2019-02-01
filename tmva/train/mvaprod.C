@@ -8,6 +8,7 @@
 #include "TMVA/Reader.h"
 
 #include "TMVAClassification.h"
+#include "xjjcuti.h"
 
 #define MAX_XB       20000
 
@@ -26,10 +27,15 @@ void mvaprob(std::string inputname, std::string treename, std::string outputname
   std::vector<int> stages;
   for(auto& ss : xjjc::str_divide(stage, ",")) { stages.push_back(atoi(ss.c_str())); }
 
+  std::cout<<"==> "<<__FUNCTION__<<": input file:"<<inputname<<std::endl;
   std::string outfname(Form("%s_%s_%s_%s_%s.root", outputname.c_str(),xjjc::str_replaceallspecial(mymethod).c_str(),
                             xjjc::number_to_string(ptmin).c_str(), (ptmax<0?"inf":xjjc::number_to_string(ptmax).c_str()),
                             xjjc::str_replaceall(stage, ",", "-").c_str()));
   outfname = xjjc::str_replaceallspecial(outfname);
+
+  std::string rootfname(Form("%s", xjjc::str_replaceall(xjjc::str_replaceall(outfname, "_root", ".root"), "rootfiles_", "rootfiles/").c_str()));
+  bool findrootf = !gSystem->AccessPathName(rootfname.c_str());
+
   std::vector<std::string> xmlname, methodsclone(methods);
   for(int mm=0; mm<methodsclone.size(); mm++)
     { 
@@ -45,13 +51,40 @@ void mvaprob(std::string inputname, std::string treename, std::string outputname
   if(!methods.size()) return;
   for(auto& me : methods) { std::cout<<"==> "<<__FUNCTION__<<": Registered method "<<me<<std::endl; }
 
+  std::string cuts = "", cutb = "", varinfo = "";
+  if(findrootf)
+    {
+      TString *cuts_ = 0, *cutb_ = 0; std::string *varinfo_ = 0;
+      TFile* rootf = TFile::Open(rootfname.c_str());
+      std::cout<<"==> "<<__FUNCTION__<<": Opening file:"<<rootfname<<"."<<std::endl;
+      if(!rootf) { std::cout<<"==> "<<__FUNCTION__<<": error: file is not opened."<<std::endl; return; }
+      TTree* rinfo = (TTree*)rootf->Get("dataset/tmvainfo");
+      if(!rinfo) { std::cout<<"==> "<<__FUNCTION__<<": error: tree is not opened."<<std::endl; return; }
+      rinfo->SetBranchAddress("cuts", &cuts_);
+      rinfo->SetBranchAddress("cutb", &cutb_);
+      rinfo->SetBranchAddress("var", &varinfo_);
+      rinfo->Show(0);
+      rinfo->GetEntry(0);
+      cuts = *cuts_; cutb = *cutb_; varinfo = *varinfo_;
+      rootf->Close();
+    }
+  else { std::cout<<"==> "<<__FUNCTION__<<": warning: file:"<<rootfname.c_str()<<" doesn't exist. skipped."<<std::endl; }
+
   TFile* inf = TFile::Open(inputname.c_str());
   TTree* nttree = (TTree*)inf->Get(treename.c_str());
   outputfilename += ("_" + outfname + ".root");
   TFile* outf = TFile::Open(outputfilename.c_str(), "recreate");
+  outf->mkdir("dataset");
+  outf->cd("dataset");
+  TTree* info = new TTree("tmvainfo", "TMVA info");
+  info->Branch("cuts", &cuts);
+  info->Branch("cutb", &cutb);
+  info->Branch("var", &varinfo);
+  info->Fill();
 
+  outf->cd();
   mytmva::createmva(nttree, outf, methods, xmlname, stages);
-  std::cout<<"==> "<<__FUNCTION__<<": file:"<<outputfilename<<std::endl;
+  std::cout<<"==> "<<__FUNCTION__<<": output file:"<<outputfilename<<std::endl;
 }
 
 void mytmva::createmva(TTree* nttree, TFile* outf, std::vector<std::string> methods, std::vector<std::string> xmlname, std::vector<int> stages)
@@ -80,9 +113,9 @@ void mytmva::createmva(TTree* nttree, TFile* outf, std::vector<std::string> meth
     }
 
   outf->cd();
-  outf->mkdir("dataset");
+  // if no dataset, mkdir dataset !!
   outf->cd("dataset");
-  TTree* note = new TTree("note", "");
+  TTree* note = new TTree("weightnote", "");
   note->Branch("varnote", &varnote);
   note->Fill();
 
