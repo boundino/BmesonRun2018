@@ -44,7 +44,7 @@ RUN=${1:-0}
 mkdir -p logs
 
 # embed=''
-embed='--pileup HiMixGEN --pileup_input dbs:/Hydjet_Quenched_Drum5Ev8_PbPbMinBias_5020GeV_2018/HINPbPbSpring18GS-100X_upgrade2018_realistic_v10_ext1-v1/GEN-SIM'
+embed='--pileup HiMixGEN --pileup_input dbs:/MinBias_Hydjet_Drum5F_2018_5p02TeV/HINPbPbAutumn18GS-103X_upgrade2018_realistic_HI_v11-v1/GEN-SIM'
 
 for ig in ${igs[@]}
 do
@@ -53,7 +53,7 @@ do
         for it in ${its[@]}
         do
             genconfig=${gens[ig]}_Pthat${pthats[ip]}_Tune${tunes[it]}_5020GeV.py
-            config=$(end_sub_name $genconfig)_Hydjet_Quenched_Drum5Ev8_GEN_SIM_PU
+            config=$(end_sub_name $genconfig)_Hydjet_Drum5F_GEN_SIM_PU
             [[ $? -ne 0 ]] && { exit $? ; }
 
             echo -e "\e[32m-- $genconfig\e[0m"
@@ -61,7 +61,7 @@ do
             echo -e "\e[32m -- embed: $embed"
             set -x
             cmsDriver.py $genconfig --mc $embed --eventcontent RAWSIM --datatier GEN-SIM \
-                --conditions 103X_upgrade2018_realistic_HI_v7 --beamspot MatchHI \
+                --conditions 103X_upgrade2018_realistic_HI_v11 --beamspot MatchHI \
                 --step GEN,SIM --scenario HeavyIons --geometry DB:Extended --era Run2_2018_pp_on_AA --no_exec \
                 --fileout file:${config}.root --step GEN,SIM --nThreads 4 \
                 --python_filename ${config}.py --no_exec -n ${nevt[ig]} || exit $? ;
@@ -80,5 +80,3 @@ process.Timing = cms.Service("Timing",
         done
     done
 done
-# --pileup HiMixGEN --pileup_input "dbs:/Hydjet_Quenched_Drum5Ev8_PbPbMinBias_5020GeV/HINPbPbAutumn18GS-pilot_103X_upgrade2018_realistic_HI_v7-v1/GEN-SIM" \
-# --pileup HiMixGEN --pileup_input "dbs:/Hydjet_Quenched_MinBias_Drum5F_ForBS/gsfs-GEN_SIM_20181202_newBS-23f5c00c57155fccf7886787eff56d05/USER" \

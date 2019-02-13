@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cmsrel CMSSW_10_3_0
-cd CMSSW_10_3_0/src/
+cmsrel CMSSW_10_3_2
+cd CMSSW_10_3_2/src/
 cmsenv
 
 git cms-addpkg GeneratorInterface/ExternalDecays
