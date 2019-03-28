@@ -6,7 +6,13 @@ input=root://cms-xrd-global.cern.ch//store/user/wangj/Hydjet_Pythia8_X3872ToJpsi
 config=step1_digi
 
 ##
-RUN=${1:-0}
+[[ $# -eq 0 ]] && { echo "$0 [--run]" ; }
+RUN=
+for i in $@
+do
+    [[ $i != --* ]] && continue
+    [[ $i == --run ]] && { RUN=1 ; }
+done
 
 ##
 mkdir -p logs

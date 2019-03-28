@@ -6,7 +6,13 @@ input=file:step1_digi.root
 config=step2_reco
 
 ##
-RUN=${1:-0}
+[[ $# -eq 0 ]] && { echo "$0 [--run]" ; }
+RUN=
+for i in $@
+do
+    [[ $i != --* ]] && continue
+    [[ $i == --run ]] && { RUN=1 ; }
+done
 
 ##
 mkdir -p logs

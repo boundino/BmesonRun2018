@@ -36,7 +36,13 @@ pthats=(0 5 10 15 30 50)
 tunes=(CUEP8M1 CP5)
 
 ##
-RUN=${1:-0}
+[[ $# -eq 0 ]] && { echo "$0 [--run]" ; }
+RUN=
+for i in $@
+do
+    [[ $i != --* ]] && continue
+    [[ $i == --run ]] && { RUN=1 ; }
+done
 
 ##
 mkdir -p logs rootfiles

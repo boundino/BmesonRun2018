@@ -1,11 +1,11 @@
 #!/bin/bash
 # run_mc_gensim_embedded_cmssw103X.sh #
-# ~CMSSW_10_3_0 #
+# ~CMSSW_10_3_2 #
 
 source utility.shinc
 
 igs=(0)
-ips=(1 2 3 4 5) # all: ({0..5})
+ips=({1..5}) # all: ({0..5})
 
 #####
 
@@ -25,20 +25,26 @@ gens=(
     Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0 # 7
 )
 nevt=(
-    5000 # 0
-    10000 # 1
-    100 # 2
-    100 # 3
-    500 # 4
+    50000 # 0
+    100000 # 1
+    200 # 2
+    200 # 3
+    1000 # 4
     1000 # 5
-    500 # 6
-    100 # 7
+    1000 # 6
+    200 # 7
 )
 pthats=(0 5 10 15 30 50) # {0..5}
 tunes=(CUEP8M1 CP5)
 
 ##
-RUN=${1:-0}
+[[ $# -eq 0 ]] && { echo "$0 [--run]" ; }
+RUN=
+for i in $@
+do
+    [[ $i != --* ]] && continue
+    [[ $i == --run ]] && { RUN=1 ; }
+done
 
 ##
 mkdir -p logs
@@ -65,9 +71,6 @@ do
                 --step GEN,SIM --scenario HeavyIons --geometry DB:Extended --era Run2_2018_pp_on_AA --no_exec \
                 --fileout file:${config}.root --step GEN,SIM --nThreads 4 \
                 --python_filename ${config}.py --no_exec -n ${nevt[ig]} || exit $? ;
-            # cmsDriver.py $genconfig --fileout file:rootfiles/${config}.root --mc --eventcontent RAWSIM --datatier GEN-SIM $embed \
-            #     --conditions 103X_upgrade2018_realistic_HI_v11 --beamspot RealisticPbPbCollision2018 --step GEN,SIM --nThreads 4 --scenario HeavyIons --geometry DB:Extended --era Run2_2018_pp_on_AA \
-            #     --python_filename ${config}.py --no_exec -n ${nevt[ig]} || exit $? ; 
 
             echo '
 process.Timing = cms.Service("Timing",
