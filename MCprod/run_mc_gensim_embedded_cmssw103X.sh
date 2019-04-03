@@ -4,7 +4,7 @@
 
 source utility.shinc
 
-igs=(0)
+igs=({0..7})
 ips=({1..5}) # all: ({0..5})
 
 #####
@@ -20,31 +20,31 @@ gens=(
     Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_prompt_Psipt0p0 # 2
     Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_nonprompt_Psipt0p0 # 3
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_prompt_Xpt0p0 # 4
-    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0 # 5: doesn't work now
+    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0 # 5
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiPiPi_prompt_Xpt0p0 # 6
     Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0 # 7
 )
 nevt=(
     50000 # 0
-    100000 # 1
-    200 # 2
-    200 # 3
-    1000 # 4
-    1000 # 5
-    1000 # 6
-    200 # 7
+    50000 # 1
+    1000 # 2
+    1000 # 3
+    10000 # 4
+    5000 # 5
+    10000 # 6
+    100 # 7
 )
 pthats=(0 5 10 15 30 50) # {0..5}
 tunes=(CUEP8M1 CP5)
 
 ##
-[[ $# -eq 0 ]] && { echo "$0 [--run]" ; }
 RUN=
 for i in $@
 do
     [[ $i != --* ]] && continue
     [[ $i == --run ]] && { RUN=1 ; }
 done
+[[ $RUN -ne 1 ]] && { echo "$0 [--run]" ; }
 
 ##
 mkdir -p logs
@@ -70,6 +70,7 @@ do
                 --conditions 103X_upgrade2018_realistic_HI_v11 --beamspot MatchHI \
                 --step GEN,SIM --scenario HeavyIons --geometry DB:Extended --era Run2_2018_pp_on_AA --no_exec \
                 --fileout file:${config}.root --step GEN,SIM --nThreads 4 \
+                --customise Configuration/DataProcessing/Utils.addMonitoring \
                 --python_filename ${config}.py --no_exec -n ${nevt[ig]} || exit $? ;
 
             echo '
@@ -78,8 +79,30 @@ process.Timing = cms.Service("Timing",
                              # useJobReport = cms.untracked.bool(True)
 )' >> ${config}.py
             
-            [[ $RUN -eq 1 ]] &&  { cmsRun ${config}.py 2>&1 | tee logs/${config}.log ; }
-            set -x
+            [[ $RUN -eq 1 ]] &&  { cmsRun -e -j logs/${config}.xml ${config}.py 2>&1 | tee logs/${config}.log ; }
+            set +x
+
+            echo ${nevt[ig]} events were ran >> logs/${config}.log
+            grep "TotalEvents" logs/${config}.xml >> logs/${config}.log
+            if [ $? -eq 0 ]; then
+                grep "Timing-tstoragefile-write-totalMegabytes" logs/${config}.xml >> logs/${config}.log
+                if [ $? -eq 0 ]; then
+                    events=$(grep "TotalEvents" logs/${config}.xml | tail -1 | sed "s/.*>\(.*\)<.*/\1/")
+                    size=$(grep "Timing-tstoragefile-write-totalMegabytes" logs/${config}.xml | sed "s/.* Value=\"\(.*\)\".*/\1/")
+                    if [ $events -gt 0 ]; then
+                        echo "McM Size/event: $(bc -l <<< "scale=4; $size*1024 / $events")" >> logs/${config}.log
+                    fi
+                fi
+            fi
+            grep "EventThroughput" logs/${config}.xml >> logs/${config}.log
+            if [ $? -eq 0 ]; then
+                var1=$(grep "EventThroughput" logs/${config}.xml | sed "s/.* Value=\"\(.*\)\".*/\1/")
+                echo "McM time_event value: $(bc -l <<< "scale=4; 1/$var1")" >> logs/${config}.log
+            fi
+            echo CPU efficiency info: >> logs/${config}.log
+            grep "TotalJobCPU" logs/${config}.xml >> logs/${config}.log
+            grep "TotalJobTime" logs/${config}.xml >> logs/${config}.log
         done
     done
 done
+
