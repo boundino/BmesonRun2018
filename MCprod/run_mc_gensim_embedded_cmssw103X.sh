@@ -4,7 +4,7 @@
 
 source utility.shinc
 
-igs=({0..7})
+igs=(2) # all: ({0..7})
 ips=({1..5}) # all: ({0..5})
 
 #####
@@ -15,24 +15,24 @@ its=(1) # fixed CP5 Tune
 ##
 
 gens=(
-    Run2018PbPb502/Bplusana/python/Pythia8_BuToJpsiK_Bpt0p0 # 0
-    Run2018PbPb502/Bsubsana/python/Pythia8_BsToJpsiPhi_Bpt5p0 # 1
-    Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_prompt_Psipt0p0 # 2
-    Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_nonprompt_Psipt0p0 # 3
-    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_prompt_Xpt0p0 # 4
-    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0 # 5
-    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiPiPi_prompt_Xpt0p0 # 6
-    Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0 # 7
+    Run2018PbPb502/Bplusana/python/Pythia8_BuToJpsiK_Bpt0p0                   # 0: B+
+    Run2018PbPb502/Bsubsana/python/Pythia8_BsToJpsiPhi_Bpt5p0                 # 1: Bs
+    Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_prompt_Psipt0p0    # 2: psi' prompt
+    Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_nonprompt_Psipt0p0 # 3: psi' nonprompt
+    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_prompt_Xpt0p0       # 4: Xrho prompt
+    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0    # 5: Xrho prompt
+    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiPiPi_prompt_Xpt0p0      # 6: Xpi  prompt
+    Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0    # 7: jpsi nonprompt
 )
 nevt=(
     50000 # 0
     50000 # 1
-    1000 # 2
-    1000 # 3
-    10000 # 4
-    5000 # 5
-    10000 # 6
-    100 # 7
+    2000  # 2
+    2000  # 3
+    10000 # 4 (pthat5:20000)
+    5000  # 5 (pthat5:10000)
+    10000 # 6 (pthat5:20000)
+    100   # 7
 )
 pthats=(0 5 10 15 30 50) # {0..5}
 tunes=(CUEP8M1 CP5)
@@ -69,7 +69,7 @@ do
             cmsDriver.py $genconfig --mc $embed --eventcontent RAWSIM --datatier GEN-SIM \
                 --conditions 103X_upgrade2018_realistic_HI_v11 --beamspot MatchHI \
                 --step GEN,SIM --scenario HeavyIons --geometry DB:Extended --era Run2_2018_pp_on_AA --no_exec \
-                --fileout file:${config}.root --step GEN,SIM --nThreads 4 \
+                --fileout file:${config}.root --step GEN,SIM --nThreads 8 \
                 --customise Configuration/DataProcessing/Utils.addMonitoring \
                 --python_filename ${config}.py --no_exec -n ${nevt[ig]} || exit $? ;
 
