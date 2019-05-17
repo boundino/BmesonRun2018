@@ -20,7 +20,7 @@ gens=(
     Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_prompt_Psipt0p0    # 2: psi' prompt
     Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_nonprompt_Psipt0p0 # 3: psi' nonprompt
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_prompt_Xpt0p0       # 4: Xrho prompt
-    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0    # 5: Xrho prompt
+    Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0    # 5: Xrho nonprompt
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiPiPi_prompt_Xpt0p0      # 6: Xpi  prompt
     Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0    # 7: jpsi nonprompt
 )
@@ -81,6 +81,8 @@ process.Timing = cms.Service("Timing",
             
             [[ $RUN -eq 1 ]] &&  { cmsRun -e -j logs/${config}.xml ${config}.py 2>&1 | tee logs/${config}.log ; }
             set +x
+
+            [[ $RUN -eq 1 ]] || continue
 
             echo ${nevt[ig]} events were ran >> logs/${config}.log
             grep "TotalEvents" logs/${config}.xml >> logs/${config}.log
