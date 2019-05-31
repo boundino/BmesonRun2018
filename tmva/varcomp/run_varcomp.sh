@@ -20,7 +20,7 @@ g++ drawvarcomp.C $(root-config --libs --cflags) -g -o drawvarcomp_${tmp}.exe ||
 
 [[ ${1:-0} -eq 1 ]] && { ./varcomp_${tmp}.exe $nt $output $ptmin $ptmax $inputb $inputs ; }
 [[ ${2:-0} -eq 1 ]] && {
-    [[ ! -f ${output}.root ]] && { rm varcomp_${tmp}.exe ; exit 1 ; }
+    [[ ! -f ${output}.root ]] && { rm varcomp_${tmp}.exe ; rm *_${tmp}.exe ; exit 1 ; }
     [[ -f ../../merge/showdir ]] && { ../../merge/showdir ${output}.root ; }
     ./drawvarcomp_${tmp}.exe $output $leg
 }

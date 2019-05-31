@@ -4,9 +4,8 @@
 # filelist="/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190520_Hydjet_Pythia8_Psi2SToJpsiPiPi_prompt_Pthat*_1033p1_pt6tkpt0p7dls0_v3.root"    ; chan=1 ;
 # filelist="/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190520_Hydjet_Pythia8_Psi2SToJpsiPiPi_nonprompt_Pthat*_1033p1_pt6tkpt0p7dls0_v3.root" ; chan=4 ;
 # filelist="/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190520_Hydjet_Pythia8_X3872ToJpsiRho_prompt_Pthat*_1033p1_pt6tkpt0p7dls0_v3.root"     ; chan=2 ;
-filelist="/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190520_Hydjet_Pythia8_X3872ToJpsiRho_nonprompt_Pthat*_1033p1_pt6tkpt0p7dls0_v3.root"  ; chan=5 ;
-
-# chan = ([0: Bs]; [1: prompt psi']; [2: prompt X->jpsi + rho]; [3: Bu]; [4: prompt psi']; [5: prompt X->jpsi + rho])
+# filelist="/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190520_Hydjet_Pythia8_X3872ToJpsiRho_nonprompt_Pthat*_1033p1_pt6tkpt0p7dls0_v3.root"  ; chan=5 ;
+filelist="/export/d00/scratch/jwang/BntupleRun2018/crab_Bfinder_20190520_Hydjet_Pythia8_BuToJpsiK_Pthat*_1033p1_pt3tkpt0p7dls2_v2.root"                ; chan=3 ;
 
 ##
 crosssec=(

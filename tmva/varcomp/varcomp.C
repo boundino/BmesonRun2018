@@ -35,7 +35,7 @@ void varcomp_main(std::string treename, std::string outputdir, float ptmin, floa
   for(int k=0; k<nt.size(); k++)
     {
       inf[k]->cd();
-      std::cout<<"--- "<<__FUNCTION__<<":  "<<"file:"<<inf[k]->GetName()<<" attached."<<std::endl;
+      std::cout<<"\e[34;1m"<<"--- "<<__FUNCTION__<<":  "<<"file:"<<inf[k]->GetName()<<" attached."<<"\e[0m"<<std::endl;
 
       int nentries = (maxnevt<ttr[k]->GetEntries()&&maxnevt>0)?maxnevt:ttr[k]->GetEntries();
       for(int i=0; i<nentries; i++)
@@ -75,6 +75,6 @@ int main(int argc, char* argv[])
 {
   if(argc==8) { varcomp_main(argv[1], argv[2], atof(argv[3]), atof(argv[4]), argv[5], argv[6], argv[7]); return 0; }
   if(argc==7) { varcomp_main(argv[1], argv[2], atof(argv[3]), atof(argv[4]), argv[5], argv[6]); return 0; }
-  std::cout<<"--- "<<__FUNCTION__<<":  invalid argument number."<<std::endl;
+  std::cout<<"\e[31;1m"<<"--- "<<__FUNCTION__<<":  invalid argument number."<<"\e[0m"<<std::endl;
   return 1;
 }

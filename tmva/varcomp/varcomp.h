@@ -45,9 +45,10 @@ namespace varcomp
 
   };
 
-  std::vector<Color_t> lcolor = {kRed+1, kBlue-3, kGreen+2};
-  std::vector<Color_t> fcolor = {kRed-9, kBlue-3, kGreen+2};
-  std::vector<Style_t> fstyle = {1001, 3004, 3005};
+  std::vector<Color_t> lcolor = {kRed, kBlue-3, kGreen+2};
+  std::vector<Color_t> fcolor = {kRed, kBlue-3, kGreen+2};
+  std::vector<Style_t> fstyle = {3005, 1001, 1001};
+  std::vector<float>   falpha = {1, 0.4, 0.4};
 
   variable::variable(mytmva::ntuple* nt_, std::string name_) : fnt(nt_), name(name_), finf(0), fvalid(true)
   { 
@@ -88,6 +89,7 @@ namespace varcomp
         h->SetLineColor(lcolor[k]);
         h->SetFillStyle(fstyle[k]);
         h->SetFillColor(fcolor[k]);
+        h->SetFillColorAlpha(fcolor[k], falpha[k]);
         h->SetLineWidth(2);
       }
   }

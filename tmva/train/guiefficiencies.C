@@ -49,13 +49,11 @@ void mytmva::efficiencies(std::string outfname)
     }
   else { return; }
 
-  // TMVA::efficiencies(dataset.Data(), outfname.c_str(), 1);
-  TMVA::efficiencies(dataset.Data(), outfname.c_str(), 2);
-  // TMVA::efficiencies(dataset.Data(), outfname.c_str(), 3);
+  TMVA::efficiencies(dataset.Data(), outfname.c_str(), 2); // 1,2,3
   TMVA::mvas(dataset.Data(), outfname.c_str(), TMVA::kCompareType);
   TMVA::correlations(dataset.Data(), outfname.c_str());
   mytmva::mvaeffs(dataset.Data(), outfname.c_str());
-  mytmva::mvaeffs(dataset.Data(), outfname.c_str(), 1.e+3, 1.e+5);
+  mytmva::mvaeffs(dataset.Data(), outfname.c_str(), 4.e+2, 1.e+5);
 
   gSystem->Exec(Form("rm %s/plots/*.png", dataset.Data()));
   gSystem->Exec(Form("mkdir -p %s/plots/%s", dataset.Data(), outputstr.c_str()));

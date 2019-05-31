@@ -12,19 +12,26 @@
 #define MASS_JPSI  3.096916
 #endif
 
+#ifndef MAX_GEN
+#define MAX_GEN      6000
+#endif
+
 namespace mytmva
 {
   class ntuple
   {
   public:
-    ntuple(TTree* nt) : fnt(nt) { fweight = nt->FindBranch("pthatweight"); setbranchaddress(); }
-    ~ntuple() { fnt = 0; }
+    ntuple(TTree* nt, TTree* gnt) : fnt(nt), fgnt(gnt) { fweight = nt->FindBranch("pthatweight"); setbranchaddress(); }
+    ntuple(TTree* nt) : fnt(nt) { fweight = nt->FindBranch("pthatweight"); fgnt = 0; setbranchaddress(); }
+    ~ntuple() { fnt = 0; fgnt = 0; }
     bool passedpre(int j);
     bool passedsig(int j) { return Bgen[j]==23333; }
-    bool passedbkg(int j) { return ((Bmass[j]>3.74 && Bmass[j]<3.83) || (Bmass[j]>3.60 && Bmass[j]<3.65) || (Bmass[j]>3.93 && Bmass[j]<4.00)); }
+    // bool passedbkg(int j) { return ((Bmass[j]>3.74 && Bmass[j]<3.82) || (Bmass[j]>3.60 && Bmass[j]<3.65) || (Bmass[j]>3.92 && Bmass[j]<4.00)); }
+    bool passedbkg(int j) { return ((Bmass[j]>3.74 && Bmass[j]<3.83) || (Bmass[j]>3.93 && Bmass[j]<4.00)); }
     bool isweight() { return fweight; }
 
     TTree* getnt() { return fnt; }
+    TTree* getgnt() { return fgnt; }
 
     float  pthatweight;
     int    Bsize;
@@ -48,16 +55,12 @@ namespace mytmva
     float  Bujeta[MAX_XB];
     float  Btrk1Eta[MAX_XB];
     float  Btrk2Eta[MAX_XB];
-    float  Btrk1Dxy[MAX_XB];
-    float  Btrk2Dxy[MAX_XB];
-    float  Btrk1D0Err[MAX_XB];
-    float  Btrk2D0Err[MAX_XB];
+    float  Btrk1Dxy1[MAX_XB];
+    float  Btrk2Dxy1[MAX_XB];
+    float  Btrk1DxyError1[MAX_XB];
+    float  Btrk2DxyError1[MAX_XB];
     float  By[MAX_XB];
 
-  private:
-    TTree* fnt;
-    bool   fweight;
-    void setbranchaddress();
     //
     bool   Bmu1TMOneStationTight[MAX_XB];
     int    Bmu1InPixelLayer[MAX_XB];
@@ -84,6 +87,27 @@ namespace mytmva
     float  Btrk2PixelHit[MAX_XB];
     float  Btrk2StripHit[MAX_XB];
     float  Btrk2PtErr[MAX_XB];
+
+    bool   Bmu1isTriggered[MAX_XB];
+    bool   Bmu2isTriggered[MAX_XB];
+    bool   Bmu1SoftMuID[MAX_XB];
+    bool   Bmu2SoftMuID[MAX_XB];
+    bool   Bmu1isAcc[MAX_XB];
+    bool   Bmu2isAcc[MAX_XB];
+
+    int    Gsize;
+    float  Gy[MAX_GEN];
+    float  Gpt[MAX_GEN];
+    int    GpdgId[MAX_GEN];
+    int    GcollisionId[MAX_GEN];
+    int    GisSignal[MAX_GEN];
+
+  private:
+    TTree* fnt;
+    TTree* fgnt;
+    bool   fweight;
+    void setbranchaddress();
+
   };
 }
 
@@ -94,12 +118,12 @@ bool mytmva::ntuple::passedpre(int j)
       TMath::Abs(Bmumumass[j]-3.096916) < 0.05 && TMath::Abs(Bujeta[j]) < 2.0 && // jpsi
       Btrk1highPurity[j] &&  TMath::Abs(Btrk1Eta[j]) < 2 && Btrk1Pt[j] > 0.9 && (Btrk1PixelHit[j]+Btrk1StripHit[j]) > 11 && TMath::Abs(Btrk1PtErr[j]/Btrk1Pt[j]) < 0.1 && // trk1
       Btrk2highPurity[j] &&  TMath::Abs(Btrk2Eta[j]) < 2 && Btrk2Pt[j] > 0.9 && (Btrk2PixelHit[j]+Btrk2StripHit[j]) > 11 && TMath::Abs(Btrk2PtErr[j]/Btrk2Pt[j]) < 0.1 && // trk2
-      // Btktkmass[j] > 0.47 && // ! tktkmass
+      // (Bmass[j]-3.096916-Btktkmass[j]) < 0.2 && // Btktkmass[j] > 0.47 && // ! tktkmass
       TMath::Abs(By[j]) < 2.0 && Bchi2cl[j] > 0.1 // B
       ) return true;
   return false;
   /*
-  */
+   */
 }
 
 void mytmva::ntuple::setbranchaddress()
@@ -128,12 +152,15 @@ void mytmva::ntuple::setbranchaddress()
   fnt->SetBranchAddress("Bujeta", Bujeta);
   fnt->SetBranchAddress("Btrk1Eta", Btrk1Eta);
   fnt->SetBranchAddress("Btrk2Eta", Btrk2Eta);
-  fnt->SetBranchAddress("Btrk1Dxy", Btrk1Dxy);
-  fnt->SetBranchAddress("Btrk2Dxy", Btrk2Dxy);
-  fnt->SetBranchAddress("Btrk1D0Err", Btrk1D0Err);
-  fnt->SetBranchAddress("Btrk2D0Err", Btrk2D0Err);
+  fnt->SetBranchAddress("Btrk1Dxy1", Btrk1Dxy1);
+  fnt->SetBranchAddress("Btrk2Dxy1", Btrk2Dxy1);
+  fnt->SetBranchAddress("Btrk1DxyError1", Btrk1DxyError1);
+  fnt->SetBranchAddress("Btrk2DxyError1", Btrk2DxyError1);
   // private
   fnt->SetBranchAddress("Bmu1TMOneStationTight", Bmu1TMOneStationTight);
+  fnt->SetBranchAddress("Bmu1SoftMuID", Bmu1SoftMuID);
+  fnt->SetBranchAddress("Bmu1isAcc", Bmu1isAcc);
+  fnt->SetBranchAddress("Bmu1isTriggered", Bmu1isTriggered);
   fnt->SetBranchAddress("Bmu1InPixelLayer", Bmu1InPixelLayer);
   fnt->SetBranchAddress("Bmu1InStripLayer", Bmu1InStripLayer);
   fnt->SetBranchAddress("Bmu1dxyPV", Bmu1dxyPV);
@@ -142,6 +169,9 @@ void mytmva::ntuple::setbranchaddress()
   fnt->SetBranchAddress("Bmu1eta", Bmu1eta);
   fnt->SetBranchAddress("Bmu1pt", Bmu1pt);
   fnt->SetBranchAddress("Bmu2TMOneStationTight", Bmu2TMOneStationTight);
+  fnt->SetBranchAddress("Bmu2SoftMuID", Bmu2SoftMuID);
+  fnt->SetBranchAddress("Bmu2isAcc", Bmu2isAcc);
+  fnt->SetBranchAddress("Bmu2isTriggered", Bmu2isTriggered);
   fnt->SetBranchAddress("Bmu2InPixelLayer", Bmu2InPixelLayer);
   fnt->SetBranchAddress("Bmu2InStripLayer", Bmu2InStripLayer);
   fnt->SetBranchAddress("Bmu2dxyPV", Bmu2dxyPV);
@@ -160,6 +190,16 @@ void mytmva::ntuple::setbranchaddress()
   fnt->SetBranchAddress("Btrk2PtErr", Btrk2PtErr);
   fnt->SetBranchAddress("By", By);
   fnt->SetBranchAddress("Btktkmass", Btktkmass);
+
+  if(fgnt)
+    {
+      fgnt->SetBranchAddress("Gsize", &Gsize);
+      fgnt->SetBranchAddress("Gy", Gy);
+      fgnt->SetBranchAddress("Gpt", Gpt);
+      fgnt->SetBranchAddress("GpdgId", GpdgId);
+      fgnt->SetBranchAddress("GcollisionId", GcollisionId);
+      fgnt->SetBranchAddress("GisSignal", GisSignal);
+    }
 }
 
 #endif

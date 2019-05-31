@@ -198,8 +198,9 @@ void mytmva::mvaeffs::DrawHistograms()
           
       // line to indicate maximum efficiency
       TLine* effline = new TLine( info->sSig->GetXaxis()->GetXmin(), 1, info->sSig->GetXaxis()->GetXmax(), 1 );
-      effline->SetLineWidth( 1 );
+      effline->SetLineWidth( 3 );
       effline->SetLineColor( 1 );
+      effline->SetLineStyle( 2 );
       effline->Draw();
  
       TLatex tl;

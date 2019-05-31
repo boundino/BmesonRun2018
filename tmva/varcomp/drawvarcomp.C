@@ -54,9 +54,9 @@ void drawvarcomp(std::string inputdir, std::vector<std::string> legtitle)
       var[0]->hist[vv]->SetMinimum(0.);
       xjjroot::sethempty(var[0]->hist[vv]);
       c->cd(vv%6 + 1);
-      for(int k=0; k<n; k++)
+      for(int k=n-1; k>=0; k--)
         {
-          var[k]->hist[vv]->Draw(Form("histe %s", k?"same":""));
+          var[k]->hist[vv]->Draw(Form("histe %s", k==n-1?"same":""));
         }
       xjjroot::drawCMS();
       leg->Draw();

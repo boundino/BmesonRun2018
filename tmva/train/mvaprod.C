@@ -27,7 +27,7 @@ void mvaprob(std::string inputname, std::string treename, std::string outputname
   std::vector<int> stages;
   for(auto& ss : xjjc::str_divide(stage, ",")) { stages.push_back(atoi(ss.c_str())); }
 
-  std::cout<<"==> "<<__FUNCTION__<<": input file:"<<inputname<<std::endl;
+  std::cout<<"\e[34;1m"<<"==> "<<__FUNCTION__<<": input file:"<<inputname<<"\e[0m"<<std::endl;
   std::string outfname(Form("%s_%s_%s_%s_%s.root", outputname.c_str(),xjjc::str_replaceallspecial(mymethod).c_str(),
                             xjjc::number_to_string(ptmin).c_str(), (ptmax<0?"inf":xjjc::number_to_string(ptmax).c_str()),
                             xjjc::str_replaceall(stage, ",", "-").c_str()));
@@ -42,33 +42,33 @@ void mvaprob(std::string inputname, std::string treename, std::string outputname
       std::string xml(Form("dataset/weights/%s/TMVAClassification_%s.weights.xml", outfname.c_str(), methodsclone[mm].c_str()));
       if(gSystem->AccessPathName(xml.c_str()))
         {
-          std::cout<<"==> "<<__FUNCTION__<<": skip "<<xml<<std::endl;
+          std::cout<<"\e[31;1m"<<"==> "<<__FUNCTION__<<": skip "<<xml<<"\e[0m"<<std::endl;
           methods.erase(std::find(methods.begin(), methods.end(), methodsclone[mm]));
           continue;
         }
       xmlname.push_back(xml.c_str());
     }
   if(!methods.size()) return;
-  for(auto& me : methods) { std::cout<<"==> "<<__FUNCTION__<<": Registered method "<<me<<std::endl; }
+  for(auto& me : methods) { std::cout<<"\e[34;1m"<<"==> "<<__FUNCTION__<<": Registered method "<<me<<"\e[0m"<<std::endl; }
 
   std::string cuts = "", cutb = "", varinfo = "";
   if(findrootf)
     {
       TString *cuts_ = 0, *cutb_ = 0; std::string *varinfo_ = 0;
       TFile* rootf = TFile::Open(rootfname.c_str());
-      std::cout<<"==> "<<__FUNCTION__<<": Opening file:"<<rootfname<<"."<<std::endl;
-      if(!rootf) { std::cout<<"==> "<<__FUNCTION__<<": error: file is not opened."<<std::endl; return; }
+      std::cout<<"\e[34;1m"<<"==> "<<__FUNCTION__<<": Opening file:"<<rootfname<<"."<<"\e[0m"<<std::endl;
+      if(!rootf) { std::cout<<"\e[31;1m"<<"==> "<<__FUNCTION__<<": error: file is not opened."<<"\e[0m"<<std::endl; return; }
       TTree* rinfo = (TTree*)rootf->Get("dataset/tmvainfo");
-      if(!rinfo) { std::cout<<"==> "<<__FUNCTION__<<": error: tree is not opened."<<std::endl; return; }
+      if(!rinfo) { std::cout<<"\e[31;1m"<<"==> "<<__FUNCTION__<<": error: tree is not opened."<<"\e[0m"<<std::endl; return; }
       rinfo->SetBranchAddress("cuts", &cuts_);
       rinfo->SetBranchAddress("cutb", &cutb_);
       rinfo->SetBranchAddress("var", &varinfo_);
-      rinfo->Show(0);
+      std::cout<<"\e[34;1m"<<std::endl; rinfo->Show(0); std::cout<<"\e[0m"<<std::endl;
       rinfo->GetEntry(0);
       cuts = *cuts_; cutb = *cutb_; varinfo = *varinfo_;
       rootf->Close();
     }
-  else { std::cout<<"==> "<<__FUNCTION__<<": warning: file:"<<rootfname.c_str()<<" doesn't exist. skipped."<<std::endl; }
+  else { std::cout<<"\e[31;1m"<<"==> "<<__FUNCTION__<<": warning: file:"<<rootfname.c_str()<<" doesn't exist. skipped."<<"\e[0m"<<std::endl; }
 
   TFile* inf = TFile::Open(inputname.c_str());
   TTree* nttree = (TTree*)inf->Get(treename.c_str());
@@ -84,7 +84,7 @@ void mvaprob(std::string inputname, std::string treename, std::string outputname
 
   outf->cd();
   mytmva::createmva(nttree, outf, methods, xmlname, stages);
-  std::cout<<"==> "<<__FUNCTION__<<": output file:"<<outputfilename<<std::endl;
+  std::cout<<"\e[34;1m"<<"==> "<<__FUNCTION__<<": output file:"<<outputfilename<<"\e[0m"<<std::endl;
 }
 
 void mytmva::createmva(TTree* nttree, TFile* outf, std::vector<std::string> methods, std::vector<std::string> xmlname, std::vector<int> stages)
@@ -111,6 +111,7 @@ void mytmva::createmva(TTree* nttree, TFile* outf, std::vector<std::string> meth
       std::string methodtag(methods[mm] + " method");
       reader->BookMVA( methodtag.c_str(), xmlname[mm].c_str() ); // ~
     }
+  std::cout<<std::endl;
 
   outf->cd();
   // if no dataset, mkdir dataset !!
