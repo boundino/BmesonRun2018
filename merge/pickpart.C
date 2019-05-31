@@ -8,6 +8,8 @@
 #include <vector>
 #include <string>
 
+#define MAX_XB       20000
+
 namespace xjjc
 {
   void progressbar(int index_, int total_, int morespace_=0);
@@ -19,7 +21,7 @@ namespace xjjc
 
 void pickpart(std::string inputname, float compress, std::string outputname="")
 {
-  if(compress >= 1) { std::cout<<__FUNCTION__<<": error: [compress] should be smaller than 1."<<std::endl; return; }
+  if(compress > 1) { std::cout<<__FUNCTION__<<": error: [compress] should be smaller than 1."<<std::endl; return; }
   if(outputname=="")
     { outputname = xjjc::str_replaceall(inputname, ".root", "_"+xjjc::number_to_string(compress*100)+"per.root"); }
   else if(!xjjc::str_contains(outputname, ".root") || inputname==outputname)
@@ -32,14 +34,27 @@ void pickpart(std::string inputname, float compress, std::string outputname="")
   xjjc::copydir_recur dirs(inf, outf, 0);
   // <<
   int interval = (int)(1/compress);
-  
+
+  // **************************************************
+  TTree* ntmix = (TTree*)inf->Get("Bfinder/ntmix");
+  int Bsize; ntmix->SetBranchAddress("Bsize", &Bsize);
+  float Bpt[MAX_XB]; ntmix->SetBranchAddress("Bpt", Bpt);
+  // **************************************************
+
   int nentries = dirs.getentries();
   std::cout<<" -- Event reading"<<std::endl;
   for(int i=0;i<nentries;i+=interval)
     {
-      if((i/interval)%10==0) { xjjc::progressbar(i, nentries); }
+      if((i/interval)%100==0) { xjjc::progressbar(i, nentries); }
 
       for(auto& inp : dirs.trees_input) { inp.first->GetEntry(i); }
+
+      // --> selections
+      int pass = 0;
+      for(int j=0; j<Bsize; j++) { if(Bpt[j]>10) { pass++; break; } }
+      if(!pass) { continue; }
+      // <-- selections
+
       for(auto& outp : dirs.trees_output)
         { 
           outp.second->cd();
