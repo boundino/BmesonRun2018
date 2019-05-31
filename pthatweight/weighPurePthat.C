@@ -19,6 +19,8 @@ int weighPurePthat(TString ifname, TString ofname)
   TFile* inf = TFile::Open(ifname);
   TTree* HiTree = (TTree*)inf->Get("hiEvtAnalyzer/HiTree");
   float pthat; HiTree->SetBranchAddress("pthat",&pthat);
+  bool cleanpthat = HiTree->FindBranch("sample");
+  float sample = 0; if(cleanpthat) { HiTree->SetBranchAddress("sample",&sample); }
 
   float weight[nBins],nweight[nBins];
   for(int j=0;j<nBins;j++)
@@ -33,6 +35,9 @@ int weighPurePthat(TString ifname, TString ofname)
     {
       HiTree->GetEntry(i);
       if(i%100==0) std::cout<<std::left<<" Processing [ "<<std::setw(10)<<i<<" / "<<nentries<<" ] - "<<std::setw(6)<<(int)(100.*i/nentries)<<"% \r"<<std::flush;
+
+      if(pthat < sample) continue;
+
       for(int j=0;j<nBins;j++)
         {
           if(isInsidebin(pthat,j)) nweight[j]++;
@@ -60,12 +65,16 @@ int weighPurePthat(TString ifname, TString ofname)
     {
       HiTree->GetEntry(i);
       if(i%100==0) std::cout<<std::left<<" Processing [ "<<std::setw(10)<<i<<" / "<<nentries<<" ] - "<<std::setw(6)<<(int)(100.*i/nentries)<<"% \r"<<std::flush;
+
       pthatweight=0;
-      for(int j=0;j<nBins;j++)
+      if(pthat > sample) 
         {
-          if(isInsidebin(pthat,j))
+          for(int j=0;j<nBins;j++)
             {
-              pthatweight = weight[j];
+              if(isInsidebin(pthat,j))
+                {
+                  pthatweight = weight[j];
+                }
             }
         }
       newBr_pthatweight->Fill();
