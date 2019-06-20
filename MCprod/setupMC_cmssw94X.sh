@@ -1,7 +1,7 @@
 #!/bin/bash
 
-cmsrel CMSSW_9_4_12
-cd CMSSW_9_4_12/src/
+cmsrel CMSSW_9_4_13_patch1
+cd CMSSW_9_4_13_patch1/src/
 cmsenv
 git cms-addpkg GeneratorInterface/ExternalDecays
 git clone https://github.com/boundino/HFAnaGenFrags.git
