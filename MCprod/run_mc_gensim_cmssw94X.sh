@@ -4,29 +4,31 @@
 
 source utility.shinc
 
-igs=(0)
+igs=(8)
 
 #####
 
 gens=(
     Run2018PbPb502/Bplusana/python/Pythia8_BuToJpsiK_Bpt0p0                   # 0: B+
-    Run2018PbPb502/Bsubsana/python/Pythia8_BsToJpsiPhi_Bpt5p0                 # 1: Bs
+    Run2018PbPb502/Bsubsana/python/Pythia8_BsToJpsiPhi_Bpt0p0                 # 1: Bs
     Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_prompt_Psipt0p0    # 2: psi' prompt
     Run2018PbPb502/Psi2Sana/python/Pythia8_Psi2SToJpsiPiPi_nonprompt_Psipt0p0 # 3: psi' nonprompt
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_prompt_Xpt0p0       # 4: Xrho prompt
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0    # 5: Xrho nonprompt
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiPiPi_prompt_Xpt0p0      # 6: Xpi  prompt
     Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0    # 7: jpsi nonprompt
+    Run2018PbPb502/Bzerosana/python/Pythia8_BdToJpsiKstar_Bpt2p0              # 8: Bd
 )
 nevt=(
-    50000 # 0
-    50000 # 1
+    40000 # 0
+    40000 # 1
     2000  # 2
     2000  # 3
     10000 # 4 (pthat5:20000)
     5000  # 5 (pthat5:10000)
     10000 # 6 (pthat5:20000)
     100   # 7
+    40000 # 8
 )
 tunes=CP5
 pthatmin=5
@@ -54,7 +56,7 @@ do
     echo -e "\e[32m -- embed: no embed for pp"
     set -x
     cmsDriver.py $genconfig --fileout file:rootfiles/${config}.root --mc --eventcontent RAWSIM --datatier GEN-SIM \
-        --conditions 94X_mc2017_realistic_forppRef5TeV --beamspot Realistic5TeVppCollision2017 --step GEN,SIM --nThreads 2 --geometry DB:Extended --era Run2_2017_ppRef \
+        --conditions 94X_mc2017_realistic_forppRef5TeV --beamspot Realistic5TeVppCollision2017 --step GEN,SIM --nThreads 4 --geometry DB:Extended --era Run2_2017_ppRef \
         --python_filename ${config}.py --no_exec --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(2194426)" -n ${nevt[ig]} || exit $? ; 
 
     echo '
