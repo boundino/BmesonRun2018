@@ -4,7 +4,7 @@
 
 source utility.shinc
 
-igs=(8)
+igs=(9)
 
 #####
 
@@ -17,7 +17,9 @@ gens=(
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0    # 5: Xrho nonprompt
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiPiPi_prompt_Xpt0p0      # 6: Xpi  prompt
     Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0    # 7: jpsi nonprompt
-    Run2018PbPb502/Bzerosana/python/Pythia8_BdToJpsiKstar_Bpt2p0              # 8: Bd
+    Run2018PbPb502/Bzeroana/python/Pythia8_BdToJpsiKstar_Bpt2p0               # 8: Bd
+    Run2018PbPb502/Dzeroana/python/Pythia8_DzeroToKPi_prompt_Dpt0p0           # 9: D0
+    Run2018PbPb502/Dzeroana/python/Pythia8_DzeroToKPi_nonprompt_Dpt0p0        # 10: D0
 )
 nevt=(
     40000 # 0
@@ -28,10 +30,12 @@ nevt=(
     5000  # 5 (pthat5:10000)
     10000 # 6 (pthat5:20000)
     100   # 7
-    40000 # 8
+    400000 # 8
+    20000 # 9
+    10000 # 10
 )
 tunes=CP5
-pthatmin=5
+pthatmin=0
 
 ##
 RUN=
@@ -45,9 +49,12 @@ done
 ##
 mkdir -p logs rootfiles
 
+# cmsDriver.py Configuration/GenProduction/python/HIN-RunIIpp5Spring18GS-00062-fragment.py --fileout file:HIN-RunIIpp5Spring18GS-00062.root --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 94X_mc2017_realistic_forppRef5TeV --beamspot Realistic5TeVppCollision2017 --step GEN,SIM --nThreads 2 --geometry DB:Extended --era Run2_2017_ppRef --python_filename HIN-RunIIpp5Spring18GS-00062_1_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.source.numberEventsInLuminosityBlock="cms.untracked.uint32(2194426)" -n 449504 || exit $? ; 
+
 for ig in ${igs[@]}
 do
-    genconfig=${gens[ig]}_BiasPthatMin${pthatmin}_Tune${tunes}_5020GeV.py
+    # genconfig=${gens[ig]}_BiasPthatMin${pthatmin}_Tune${tunes}_5020GeV.py
+    genconfig=${gens[ig]}_Pthat${pthatmin}_Tune${tunes}_5020GeV.py
     config=$(end_sub_name $genconfig)_GEN_SIM_PU
     [[ $? -ne 0 ]] && { exit $? ; }
 
