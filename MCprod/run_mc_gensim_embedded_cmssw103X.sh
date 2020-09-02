@@ -4,8 +4,8 @@
 
 source utility.shinc
 
-igs=(2) # all: ({0..7})
-ips=({1..5}) # all: ({0..5})
+igs=(8) # gens (channel)
+ips=(0) # pthats, all: ({0..5})
 
 #####
 
@@ -23,6 +23,8 @@ gens=(
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiRho_nonprompt_Xpt0p0    # 5: Xrho nonprompt
     Run2018PbPb502/X3872ana/python/Pythia8_X3872ToJpsiPiPi_prompt_Xpt0p0      # 6: Xpi  prompt
     Run2018PbPb502/Jpsi1Sana/python/Pythia8_JpsiToMuMu_nonprompt_Jpsipt0p0    # 7: jpsi nonprompt
+    Run2018PbPb502/Dzeroana/python/Pythia8_DzeroToKPi_prompt_Dpt0p0           # 8: D0 prompt
+    Run2018PbPb502/Dzeroana/python/Pythia8_DzeroToKPi_nonprompt_Dpt0p0        # 9: D0 prompt
 )
 nevt=(
     50000 # 0
@@ -33,6 +35,8 @@ nevt=(
     5000  # 5 (pthat5:10000)
     10000 # 6 (pthat5:20000)
     100   # 7
+    500   # 8
+    500   # 9
 )
 pthats=(0 5 10 15 30 50) # {0..5}
 tunes=(CUEP8M1 CP5)
